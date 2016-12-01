@@ -1,0 +1,91 @@
+@(page : String)
+
+
+
+@link(action:String) = @{
+
+    
+   
+    var url = page+"_"+action
+   	url
+    
+}
+
+
+@main{               
+        <div class="wrapper">
+            <div class="container" >
+			    <div class="row pageWidthDecreStyles">
+					<div class="col-md-6">
+						<div id="bc1" class="btn-group btn-breadcrumb">
+            					<a href="@routes.Application.index()" class="btn btn-success" style="height: 25px;padding: 2px 20px 0px 10px;margin-top: -10px;"><i class="icon-home"></i></a>
+            					<a href="#" class="btn btn-default" style="font-size: 10px;height: 25px;margin-top: -11px;padding:4px 10px 7px 20px;">@page</a>
+        				  </div>
+					</div>
+					<div class="col-md-6">
+						<span class="pull-right">
+							<div>
+								<a href="@routes.Application.index()" class="btn btn-default" style="font-size: 11px;padding: 3px 6px 1px 2px;"><i class="icon-arrow-left" style="font-size: 10px;"></i>BACK</a>
+							</div>
+						</span>
+					</div>     
+                 	<br><br>
+        			<div class="col-md-6">       
+						<div class="panel panel-success mgTabStyles1">
+					    <div class="panel-heading panelstyles">ADD</div>
+							<div class="panel-body panelbodystyles">
+					            <a href="@routes.Application.showOptions(page,"ADD")"><img src="@routes.Assets.at("images/tabImages/add.png")" class="img-responsive center-block" alt="Image" style="width:15%">
+					            </a>
+					             <p class="text-muted" style="font-size:14px;">
+					                    @page</p>
+					         </div>
+					   	</div> 
+					</div>
+					<div class="col-md-6">       
+						<div class="panel panel-success mgTabStyles1">
+					 	<div class="panel-heading panelstyles">VIEW</div>
+                			<div class="panel-body panelbodystyles">
+                             	<a href="@routes.Application.showOptions(page,"VIEW")"><img src="@routes.Assets.at("images/tabImages/view.jpg")" class="img-responsive center-block" alt="Image" align="middle"  style="width:25%">
+                                </a>
+                                 <p class="text-muted" style="margin-top:5px;font-size:14px;">
+                                        @page</p>
+                            </div>
+						</div> 
+					</div>
+                    <div class="col-md-6">       
+						<div class="panel panel-success mgTabStyles1">
+					 	<div class="panel-heading panelstyles">MODIFY</div>
+                			<div class="panel-body panelbodystyles">
+                                <a href="@routes.Application.showOptions(page,"MODIFY")"><img src="@routes.Assets.at("images/tabImages/modify.png")" class="img-responsive center-block" alt="Image" align="middle"  style="width:15%">
+                                </a>
+                                 <p class="text-muted" style="margin-top:10px;font-size:14px;">
+                                        @page</p>
+                       		</div>
+				   		</div> 
+					</div>
+                    @*@if((session.get("role")).contains("sa")){*@
+	                <div class="col-md-6">       
+						<div class="panel panel-success mgTabStyles1">
+					 	<div class="panel-heading panelstyles panelstyles">DELETE</div>
+                			<div class="panel-body panelbodystyles">
+                                <a href="@routes.Application.showOptions(page,"DELETE")"><img src="@routes.Assets.at("images/tabImages/delete.png")" class="img-responsive center-block" alt="Image" align="middle" style="width:10%">
+                        		</a>   
+		                        <p class="text-muted" style="margin-top:20px;font-size:14px;">
+		                            @page</p>
+		                   
+		                    </div>
+				   		</div> 
+				  	</div>
+                   @* }*@
+                    <div class="col-md-12">       
+	                    <div class="footer">
+				          <hr/>   
+							 	<p  class="pull-right footerStyle"> <b class="copyright">&copy; 2016 SRINI Group &nbsp;</b>All rights reserved.</p>
+						</div> <!-- footer -->
+					</div>    
+       			</div> <!-- row -->
+      		</div> <!-- container -->
+ 		</div> <!-- wrapper -->
+ 		
+    
+    }

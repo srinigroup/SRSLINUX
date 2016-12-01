@@ -1,0 +1,85 @@
+@(expenseHeadForm: Form[ExpenseHead] )
+
+ @import helper._ 
+ @import helper.twitterBootstrap._
+
+
+@main{
+
+	<div class="wrapper">
+     	<div class="container" >
+			 <div class="row">
+            	<div class="span12 widthFor3TabStyles">
+               		 <span>
+                    	<div id="bc1" class="btn-group btn-breadcrumb">
+       						<a href="@routes.Application.index()" class="btn btn-success homeButStyl"><i class="icon-home"></i></a>
+            				<a href="@routes.Application.showOptions("EXPENSE HEAD","ALL")" class="btn btn-default" id="homeButtonStyles">EXPENSE HEAD</a>
+            				<a href="#" class="btn btn-default" id="homeButtonStyles">ADD</a>
+      					</div>
+        			</span>
+            		<span class="pull-right backButPositionStyle">
+           				 <div>
+           					<a href="@routes.Application.showOptions("EXPENSE HEAD","ALL")" class="btn btn-default backButtonStyl"><i class="icon-arrow-left"></i>BACK</a>
+          				 </div>
+        			</span>
+        	
+         	<br><br>
+         	
+         	@if(flash.containsKey("success")) {
+       			<div class="alert alert-warning shiftEditTableStyles shiftEditTableFonts" style="padding:5px;">
+			 <b style="font-size:12px;">Done!</b>@flash.get("success")
+        		</div>
+    		}
+	
+  
+  	@helper.form(action = routes.ExpenseHeads.save()) {
+		
+
+	<!-- panel-group -->
+	<div class="panel-group  shiftTableStyles shiftEditTableFonts" id="accordion" style="margin-top:10px;">
+		
+		<!-- panel-primary 1-->
+   		<div class="panel panel-primary">
+        	<div class="panel-heading panelStyleInAdd">
+            	<a data-toggle="collapse" data-parent="#accordion" href="#accordionOne">
+          			<h4 class="panel-title" style="font-size:12px;">
+          				<i class="icon-reorder"></i>&nbsp;
+            			ExpenseHead Details
+            			<i class="icon-unlock icon-large pull-right"></i>
+             		</h4>
+             	</a>  
+        	</div>
+        	<div id="accordionOne" class="panel-collapse collapse in">
+          		<div class="panel-body">
+          			<div class="table-responsive"> 
+        				<table class="table table-bordered" >
+							<fieldset> 
+	         					<legend style="font-size:15px;"> New ExpenseHead</legend>    
+								@helper.inputText(expenseHeadForm("name"), '_label -> "Name", 'onblur -> "javascript:checkForUnique(this,'EXPENSEHEAD','NAME');")
+         						@helper.inputText(expenseHeadForm("category"), '_label -> "Category") 
+							</fieldset>
+						</table>
+					</div>
+            	</div>
+        	</div>
+      	</div><!-- panel-primary 1 End-->
+      	
+      	<!-- bottom div ,for submit and cancel button's -->
+        <div style="height:50px; margin-right:50px;  margin-top:10px;">
+        	<div>
+            	<p style="text-align: right; /"><input type="submit" class="btn btn-large btn-success" sstyle="padding-right:30px; padding-left:30px; text-align:center;font-size:12px;">&nbsp;&nbsp;  
+				
+		    </div>
+        </div>
+        
+    
+    </div><!-- panel-group End-->
+
+
+	}<!-- form end -->
+			</div>
+        	</div>
+	</div>
+	</div>
+
+}<!-- main end -->

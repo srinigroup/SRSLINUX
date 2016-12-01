@@ -1,0 +1,178 @@
+@(employee : Employee )
+ @import helper._ 
+ @import helper.twitterBootstrap._
+ 
+@currentDateFormat(currDate:Date) = @{
+  import java.util.Calendar
+  import java.text.SimpleDateFormat
+
+ 
+  val curTimeFormat = new SimpleDateFormat("dd/MM/yyyy")
+
+	if(currDate != null){
+  curTimeFormat.format(currDate)
+  }
+}
+
+@main{
+	<div class="wrapper">
+     	<div class="container" >
+			 <div class="row pageWidthDecreStyles">
+		 		<div class="col-md-6">
+                	<div id="bc1" class="btn-group btn-breadcrumb">
+   						<a href="@routes.Application.index()" class="btn btn-success homeButStyl"><i class="icon-home"></i></a>
+        				<a href="#" class="btn btn-default" id="homeButtonStyles"><div>PROFILE</div></a>
+  					</div>
+      			</div>
+            	<div class="col-md-6">
+	        		<span class="pull-right">
+           				 <div>
+           					<a href="@routes.Application.index()" class="btn btn-default backBtnStylesInAll"><i class="icon-arrow-left"></i>BACK</a>
+          				 </div>
+        			</span>
+        		 </div>
+         		 <br><br><br>
+
+	<!-- panel-group -->
+	<div class="panel-group col-lg-12 shiftEditTableFonts" id="accordion">
+		
+		<!-- panel-primary 1-->
+   		<div class="panel panel-primary">
+        	<div class="panel-heading panelStyleInAdd">
+            	<a data-toggle="collapse" data-parent="#accordion" href="#accordionOne">
+          			<h4 class="panel-title" style="font-size:12px;">
+          				<i class="icon-reorder"></i>&nbsp;
+            			Employee Details
+            			<i class="icon-unlock icon-large pull-right"></i>
+             		</h4>
+             	</a>  
+        	</div>
+        	<div id="accordionOne" class="panel-collapse collapse in">
+          		<div class="panel-body">
+          			<div class="table-responsive"> 
+        				<table class="table table-hover  table-striped profileTable">
+							<tr>
+								<td class="headStyles">First Name</td><td>@employee.firstName</td>
+								<td class="headStyles">Last Name</td><td>@employee.lastName</td>
+							</tr>
+							<tr>
+								<td class="headStyles">Short Name(if any)</td><td>@employee.shortName</td>
+								<td class="headStyles">Gender</td><td>@employee.gender</td>
+							</tr>
+							<tr>
+								<td class="headStyles">Date Of Birth</td><td>@currentDateFormat(employee.dob)</td>
+								<td></td><td></td>
+							</tr>
+						</table>
+					</div>
+            	</div>
+        	</div>
+      	</div><!-- panel-primary 1 End-->
+      	
+      	<!-- panel-primary 2-->
+      	<div class="panel panel-primary">
+        	<div class="panel-heading panelStyleInAdd">
+            	<a data-toggle="collapse" data-parent="#accordion" href="#accordionTwo">
+          			<h4 class="panel-title" style="font-size:12px;">
+          				<i class="icon-reorder"></i>&nbsp;
+              			Contact Info
+              			<i class="icon-lock icon-large pull-right"></i>
+          			</h4>
+                </a>
+        	</div>
+        	<div id="accordionTwo" class="panel-collapse collapse">
+          		<div class="panel-body">
+           			<div class="table-responsive"> 
+        				<table class="table table-hover  table-striped profileTable">
+							<tr>
+								<td class="headStyles">Primary phone1</td><td>@employee.contactInfo.phone1</td>
+								<td class="headStyles">Primary E-Mail</td><td>@employee.contactInfo.email</td>
+							</tr>
+							<tr>
+								<td class="headStyles">Secondary phone2</td><td>@employee.contactInfo.phone2</td>
+								<td class="headStyles">Facsmile</td><td>@employee.contactInfo.facsimile</td>
+							</tr>
+						</table>
+					</div>
+      			</div>
+        	</div>
+      	</div><!-- panel-primary 2 End-->
+      	
+      	<!-- panel-primary 3-->
+      	<div class="panel panel-primary">
+        	<div class="panel-heading panelStyleInAdd">
+            	<a data-toggle="collapse" data-parent="#accordion" href="#accordionThree">
+          			<h4 class="panel-title" style="font-size:12px;">
+          				<i class="icon-reorder"></i>&nbsp;
+              			Address
+              			<i class="icon-lock icon-large pull-right"></i>
+          			</h4>
+                </a>
+        	</div>
+        	<div id="accordionThree" class="panel-collapse collapse">
+          		<div class="panel-body">
+           			<div class="table-responsive"> 
+        				<table class="table table-hover  table-striped profileTable">
+        					<tr>
+								<td class="headStyles">Street :</td><td>@employee.address.street</td>
+								<td class="headStyles">City :</td><td>@employee.address.city</td>
+							</tr>
+							<tr>
+								<td class="headStyles">Number :</td><td>@employee.address.number</td>
+								<td class="headStyles">State :</td><td>@employee.address.state</td>
+							</tr>
+							<tr>
+								<td class="headStyles">PostalCode :</td><td>@employee.address.postalCode</td>
+								<td class="headStyles">Country :</td><td>@employee.address.country</td>
+							</tr>
+						</table>
+					</div>
+      			</div>
+        	</div>
+      	</div><!-- panel-primary 3 End-->
+      	
+      	
+      	<!-- panel-primary 4-->
+      	<div class="panel panel-primary">
+        	<div class="panel-heading panelStyleInAdd">
+            	<a data-toggle="collapse" data-parent="#accordion" href="#accordionFour">
+          			<h4 class="panel-title" style="font-size:12px;">
+          				<i class="icon-reorder"></i>&nbsp;
+              			Employement  Information
+              			<i class="icon-lock icon-large pull-right"></i>
+          			</h4>
+                </a>
+        	</div>
+        	<div id="accordionFour" class="panel-collapse collapse">
+          		<div class="panel-body">
+          		
+           			<div class="table-responsive"> 
+        				<table class="table table-hover  table-striped profileTable">
+        					<tr>
+								<td class="headStyles">Company :</td><td>@employee.company</td>
+								<td class="headStyles">Store :</td><td>@employee.store</td>
+							</tr>
+							<tr>
+								<td class="headStyles">Employment Commence Date :</td><td>@currentDateFormat(employee.ecd)</td>
+								<td class="headStyles">Approved Hourly Rate/Annual Salary :</td><td>@employee.sal</td>
+							</tr>
+							<tr>
+								<td class="headStyles">Designation :</td><td>@employee.designation</td>
+								<td></td><td></td>
+							</tr>
+						</table>
+					</div>
+					
+      			</div>
+        	</div>
+      	</div><!-- panel-primary 4 End-->
+      	
+    </div><!-- panel-group End-->
+
+        		</div> <!-- row -->
+      		</div> <!-- container -->
+     	</div> <!-- wrapper -->
+     	
+}<!-- main end -->
+
+   

@@ -1,0 +1,150 @@
+ @checkPermission(user:String) = @{
+    
+   var role =  user 
+    if(role == null) {
+       	role = "null";
+    }
+     role
+}
+ @main{   
+        <div class="wrapper">
+            <div class="container">
+				<div class="row pageWidthDecreStyles">
+            
+            	 @if(checkPermission(session.get("role")).contains("sk")){
+            	<div class="col-lg-4">
+				      <div class="panel panel-success panelTStyles" >
+				        <div class="panel-heading panelstyles">SHIFT</div>
+            				<div class="panel-body panelbodystyles">
+	                        		<a href="@routes.Application.showOptions("SHIFT","ALL")"><img src="@routes.Assets.at("images/tabImages/shift.png")" class="img-responsive center-block" alt="Image" style="width:25%;">
+	                                 </a>
+                                  <p class="text-muted pTextInHomeStore" style="margin-top:7px;">
+                                        Profit</p>
+                     		</div>
+					      </div> 
+					   </div>
+					   <div class="col-lg-4">
+				      	<div class="panel panel-success panelTStyles">
+				        	<div class="panel-heading panelstyles">Employee TimeSheet</div>
+            					<div class="panel-body panelbodystyles">
+					 
+                                 <a href="@routes.Application.showOptions("EMP TIMESHEET","ALL")"><img src="@routes.Assets.at("images/tabImages/timesheet.png")" class="img-responsive center-block"  alt="Image" style="width:20%;">
+                       				
+                                </a>
+                                <p class="text-muted pTextInHomeStore">Store Keeper</p>
+                                </div>
+					      </div> 
+					   </div>
+                     <div class="col-lg-4">
+				      <div class="panel panel-success panelTStyles">
+				        <div class="panel-heading panelstyles">SUPPLIER</div>
+            				<div class="panel-body panelbodystyles">
+                                <a href="@routes.Shifts.storeSuppliersList()"><img src="@routes.Assets.at("images/tabImages/supplier.png")" class="img-responsive center-block" alt="Image" style="width:25%;">
+                                </a>
+                                <p class="text-muted pTextInHomeStore">
+                                        Supplier's Info</p>
+                     		</div>
+					   </div> 
+					  </div>
+                    
+                }
+      
+                 @if(checkPermission(session.get("role")).contains("sm")){
+                	 <div class="col-lg-4">
+				      <div class="panel panel-success panelTStyles" >
+				        <div class="panel-heading panelstyles">TIMESHEET</div>
+            				<div class="panel-body panelbodystyles">
+                            	<a href="@routes.Application.showOptions("TIMESHEET","ALL")"><img src="@routes.Assets.at("images/tabImages/timesheet.png")" class="img-responsive center-block" alt="Image"  style="width:20%;">
+                                  </a>
+                                  <p class="text-muted pTextInHomeStore">
+                                           Store Manager</p>
+                              </div>
+					   		</div> 
+					  	</div>
+					  	<div class="col-lg-4">
+				      		<div class="panel panel-success panelTStyles" >
+				        		<div class="panel-heading panelstyles">SALES RECONCILIATION</div>
+            						<div class="panel-body panelbodystyles">   
+                      
+		                                 <a href="@routes.Application.showOptions("SALES RECONCILIATION","ALL")"><img src="@routes.Assets.at("images/tabImages/saleesreconcilation.png")" class="img-responsive center-block" alt="Image"  style="width:20%;">
+		                                  </a>
+		                                  <p class="text-muted pTextInHomeStore">
+		                                            Verfiy Sales</p>
+		                               </div>
+					   				</div> 
+					  			</div>
+                     <div class="col-lg-4">
+				      <div class="panel panel-success panelTStyles" >
+				        <div class="panel-heading panelstyles">DAILY RECONCILIATION</div>
+            				<div class="panel-body panelbodystyles">
+                                 <a href="@routes.Application.showOptions("DAILY RECONCILIATION","ALL")"><img src="@routes.Assets.at("images/tabImages/reoncilation1.png")" class="img-responsive center-block" alt="Image"  style="width:20%;">
+                                  </a>
+                                  <p class="text-muted pTextInHomeStore">
+                                          Banking,Pay Wages,Safe Payouts</p>
+                             </div>
+						</div> 
+					</div>  
+                 }
+            	<div class="col-lg-4">
+				      <div class="panel panel-success panelTStyles" >
+				        <div class="panel-heading panelstyles">INVOICE INVENTORY</div>
+            				<div class="panel-body panelbodystyles">
+                                <a href="@routes.InvoiceInventory.showUploadPage()"><img src="@routes.Assets.at("images/tabImages/upload1.png")" class="img-responsive center-block" alt="Image"  style="width:22%;">
+                                </a>
+                                <p class="text-muted pTextInHomeStore">
+                                       Invoice Upload System</p>
+                                </div>
+							</div> 
+				</div>  
+				<div class="col-lg-4">
+				      <div class="panel panel-success panelTStyles" >
+				        <div class="panel-heading panelstyles">REPORTS</div>
+            				<div class="panel-body panelbodystyles">
+                                <a href="@routes.Reports.getReportHomeForStore()"><img src="@routes.Assets.at("images/tabImages/reports.png")" class="img-responsive center-block" alt="Image" align="middle" style="width:20%;">
+                            	</a>
+                            	<p class="text-muted pTextInHomeStore">
+                                    Reports Generation</p>
+                              </div>
+							</div> 
+				</div>  
+				<div class="col-lg-4">
+				      <div class="panel panel-success panelTStyles" >
+				        <div class="panel-heading panelstyles">MONTHLY REPORTS</div>
+            				<div class="panel-body panelbodystyles">
+                            	<a href="@routes.MonthlyReports.showUploadPage()"><img src="@routes.Assets.at("images/tabImages/upload.png")" class="img-responsive center-block" alt="Image" align="middle" style="width:15%;">
+                            	</a>
+                            	<p class="text-muted pTextInHomeStore" style="margin-top: 10px;">
+                                    Upload Monthly Reports</p>
+                 			</div>
+						</div> 
+				</div>  
+            	<div class="col-lg-4">
+				      <div class="panel panel-success panelTStyles" >
+				        <div class="panel-heading panelstyles">VIEW HO FORMS</div>
+            				<div class="panel-body panelbodystyles">
+                   				<a href="@routes.HoForms.getAllHeadOfficeForms()"><img src="@routes.Assets.at("images/tabImages/mreports1.png")" class="img-responsive center-block" alt="Image" align="middle" style="width:15%;">
+                                </a> 
+                                 <p class="text-muted pTextInHomeStore" style="margin-top: 10px;">
+                                        Head Office Forms</p>
+                               </div>
+						</div> 
+				</div>  
+			
+        		</div> <!-- row -->
+      		</div> <!-- container -->
+     	</div> <!-- wrapper -->
+     	 <div class="wrapper">
+            <div class="container">
+                <div class="row">
+			     	 <div class="footer">
+							          <hr/>   
+							            <div class="container">
+							               <p  class="pull-right footerStyle"> <b class="copyright">&copy; 2016 SRINI Group &nbsp;</b>All rights reserved.</p>
+							            </div>
+					 </div> <!-- footer -->
+					 </div> <!-- row -->
+      		</div> <!-- container -->
+     	</div> <!-- wrapper -->
+			        
+      
+}

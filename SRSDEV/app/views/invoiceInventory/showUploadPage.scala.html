@@ -1,0 +1,86 @@
+@(id:Long ,invoiceTypeList : List[String])
+@import helper._ 
+@import helper.twitterBootstrap._
+
+@main{
+	
+	<div class="wrapper">
+     	<div class="container" >
+			 <div class="row">
+            	<div class="span12 widthFor3TabStyles">
+               		 <span>
+                    	<div id="bc1" class="btn-group btn-breadcrumb">
+       						<a href="@routes.Application.index()" class="btn btn-success homeButStyl"><i class="icon-home"></i></a>
+            				<a href="#" class="btn btn-default" id="homeButtonStyles">INVOICE</a>
+      					</div>
+        			</span>
+            		<span class="pull-right backButPositionStyle">
+           				 <div>
+           					<a href="@routes.Application.index()" class="btn btn-default backButtonStyl"><i class="icon-arrow-left"></i>BACK</a>
+          				 </div>
+        			</span>
+        	
+         		 <br><br>
+         		 
+         	@if(flash.containsKey("success")) {
+		         <div class="alert alert-warning shiftEditTableStyles shiftEditTableFonts" style="padding:5px;">
+		            <b style="font-size:12px">Done!</b>@flash.get("success")
+		        </div>
+		    } 
+	
+	@helper.form(action = routes.InvoiceInventory.uploadInvoices(id),'enctype -> "multipart/form-data") {
+	<div class="panel panel-success   shiftEditTableStyles shiftEditTableFonts" style="height:170px;border-color:#000000;margin-top:10px;" >
+		<div class="panel-heading" style="background-color:#9fdf9f;height:40px;"><center> <h2 style="color:#000;margin-top: 5px;font-size:18px">Upload Invoice </h2></center></div>
+	   		 <div class="panel-body" style="font-size: 16px;">
+				<div class="table-responsive">
+	  				<table style="background-color: #dff0d8;border-color:#000000;" class="table table-bordered">
+	  					<tr>
+	            			<td>
+	            				<div class="clearfix" id="invoiceType_field">
+									<label for="invoiceType"><b style="font-size:11px;">InvoiceType</b></label>
+										<div>
+											<select name="invoiceType" class="shiftEditTableFonts" required>
+							            		<option class="blank" value="">-- Choose a Invoice Type --</option>
+							  					<option value="CashPaid">CashPaid</option>
+							  					<option value="Others">Others</option>
+							  					<option value="Statements">Statements</option>
+							  					<option value="Fuel">Fuel</option>
+							  				</select> 
+										    <span class="help-inline"></span>
+										</div>
+								</div>
+						  	</td>
+						  	<td>
+	            				<div class="clearfix" id="invoiceFiles_field">
+									<label for="invoiceFiles"><b style="font-size:11px;">Select Files</b></label>
+										<div class="shiftEditTableFonts">
+											<input type="file" id="invoiceFiles" name="invoiceFiles" accept="application/pdf,application/jpg" multiple="multiple" onchange="javascript:updateList()" required />
+										    <span class="help-inline"></span>
+										</div>
+								</div>
+						  	</td>
+	            		</tr>
+	            	</table>
+	            	        <center><input type="submit" value="Upload" class="btn btn-primary" onclick="return invoiceformValidation()" style="margin-top: -10px;padding:7px 10px 7px 10px;font-size:10px;"></center>
+	            	
+	         	</div>
+	         </div>
+		</div>			
+		 
+        <span id="displaySelected" style="display:none;"><b style="color:#fff;">Selected Invoices:</b></span>
+		<div id="fileList" class="shiftEditTableStyles" style="background-color: white;border-color: #fff;"></div><br/>
+		
+        
+        
+	
+	} <!-- form ends -->
+	<div class="shiftEditTableStyles">
+		<!--<a href="#" data-toggle="popover" title="Total Invoices : @Invoice.pendingInvoicesByStore(id)" data-content="<ul>@for(invoiceType <- invoiceTypeList){<li><a href='@routes.InvoiceInventory.getInvoicesByStoreAndType(id,invoiceType)'>@invoiceType</a> : @Invoice.pendingInvoicesByStoreAndType(id,invoiceType)</li>}</ul>" data-placement="bottom" class="pull-right btn btn-success">Uploaded Invoices</a> -->
+		<a href="@routes.InvoiceInventory.dateSelectPageForSK(id)" class="pull-right btn btn-success" style="font-size: 11px;padding: 5px 10px 5px 10px;">Uploaded invoices</a>
+	</div>
+				</div>
+        	</div>
+		</div>
+	</div>
+	
+} <!-- main ends -->

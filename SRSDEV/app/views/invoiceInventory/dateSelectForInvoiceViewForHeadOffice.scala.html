@@ -1,0 +1,189 @@
+@(invoiceList : List[Invoice], sid:Long, startDate : Date, endDate : Date,supplierName:String,invoiceStatus:String)
+@import helper._ 
+@import helper.twitterBootstrap._
+
+@checkSelected(id:Long)= @{
+	val result="selected"
+		if(sid != null){
+			if(sid == id){
+				result
+			}
+		}
+}
+
+@currentDateFormat(currDate:Date) = @{
+  import java.util.Calendar
+  import java.text.SimpleDateFormat
+
+ 
+  val curTimeFormat = new SimpleDateFormat("dd/MM/yyyy")
+  
+	if(currDate != null){
+		curTimeFormat.format(currDate)
+	}
+  
+}
+
+@main{
+	<!-- Fancybox css -->
+	<link rel="stylesheet" href="@routes.Assets.at("fancybox/jquery.fancybox.css?v=2.1.5")" type="text/css" media="screen" /> <!-- Fancybox css -->
+	<script type="text/javascript" src="@routes.Assets.at("fancybox/jquery.fancybox.pack.js?v=2.1.5")"></script> <!-- Fancybox js, need jquery advanced -->
+	<!-- Fancybox css -->
+	<div class="wrapper">
+     	<div class="container" >
+			 <div class="row">
+            	<div class="span12 widthFor3TabStyles">
+               		 <span>
+                    	<div id="bc1" class="btn-group btn-breadcrumb">
+       						<a href="@routes.Application.index()" class="btn btn-success" style="padding:2px 20px 0px 18px;height: 25px;margin-top: -10px;font-size: 9px;"><i class="icon-home" ></i></a>
+       						<a href="@routes.InvoiceInventory.showUploadPageForHeadOffice()" class="btn btn-default" id="homeButtonStyles">INVOICE</a>
+            				<a href="#" class="btn btn-default" id="homeButtonStyles">UPLOADED</a>
+      					</div>
+        			</span>
+            		<span class="pull-right" style="padding-right:25%;">
+           				 <div>
+           					<a href="@routes.InvoiceInventory.showUploadPageForHeadOffice()" class="btn btn-default" style="font-size: 10px;padding: 1px 6px 1px 2px;"><i class="icon-arrow-left"></i>BACK</a>
+          				 </div>
+        			</span>
+        	
+         		 <br><br>
+         		 
+         	@if(flash.containsKey("success")) {
+		        <div class="alert alert-warning shiftEditTableStyles shiftEditTableFonts" style="padding:5px;">
+		            <b style="font-size:12px">Done!</b>@flash.get("success")
+		        </div>
+		    } 
+	
+	@helper.form(action = routes.InvoiceInventory.displayUploadedForHeadOffice()) {
+	
+			<div class="table-responsive shiftEditTableStyles shiftEditTableFonts">
+  				<table style="background-color: white;border-color: #fff;" class="table table-bordered">
+  					<tr>
+  						<td>
+            				<div class="clearfix" id="storeId_field">
+								<label for="storeId" id="pageTextFontSize">Select Store</label>
+									<div class="textBoxesStyles">
+										<select name="storeId" id="invoiceStoreList" required>
+						            		<option class="blank" value="">-- Choose a Store --</option>
+						  					@for(store <- Stores.getStoresList()){
+						  						<option value="@store.id" @checkSelected(store.id) id="pageTextFontSize">@store.name</option>
+						  					}
+						  				</select>
+									    <span class="help-inline"></span>
+									</div>
+							</div>
+					  	</td>
+					  	<td>
+							<div class="clearfix  " id="date_field">
+		    					<label for="date" id="pageTextFontSize">Start Date</label>
+		    					<div class="input">
+		        					<input type="text" name="invoiceStartDate" value="@currentDateFormat(startDate)" class="startDatePicker textBoxesStyles">
+		    					</div>
+							</div>
+						</td>
+						
+						<td>
+							<div class="clearfix  " id="endDate_field">
+		    					<label for="endDate" id="pageTextFontSize">End Date</label>
+		    					<div class="input">
+		        					<input type="text" name="invoiceEndDate" value="@currentDateFormat(endDate)" class="endDatePicker textBoxesStyles" >
+		    					</div>
+							</div>
+						</td>
+						</tr>
+						<tr>
+						
+						<td>
+							<div class="clearfix  " id=searchbox_field">
+		    					<label for="searchbox" id="pageTextFontSize">Search By Supplier</label>
+		    					<div class="input">
+									<input type="search" id="searchboxInInvoice" name="s" class="textBoxesStyles" value="@supplierName" placeholder="Filter by Supplier name..." style="font-size:10px;">
+								</div>
+							</div>
+						</td>
+						<td>
+							<div class="clearfix  " id="invoice_status_field">
+		    					<label for="invoice_status" id="pageTextFontSize">Select Status</label>
+		    					<div class="textBoxesStyles">
+								<select name="invoice_status" id="invoice_status">
+									<option value="ALL">ALL</option>
+									<option value="UPLOADED">UPLOADED</option>
+									<option value="PROCESSED">PROCESSED</option>
+									<option value="PAID">PAID</option>
+								</select>
+								</div>
+							</div>
+						</td>
+					  	<td>
+            					<input type="submit" value="Get Invoices" class="btn btn-primary" style="margin-top:7px;font-size: 10px; padding: 5px;">
+					  	</td>
+					  	</tr>
+			</table>
+		
+	} <!-- form ends -->
+						@*<td>
+							@helper.form(action =routes.InvoiceInventory.getInvoicesBySupplierNameInHeadOffice(), 'id -> "searchSupplierWiseForm"){
+							<select  name="store_id" id="store_id" required>
+							<option class="blank textBoxesStyles" value="">--Choose Store--</option>
+							@for(store <- Store.all()){
+							<option  value="@store.id" @checkSelected(store.id)>@store.name</option>
+							}
+							</select>
+							<input type="search" id="searchboxInInvoice" name="s" value="@supplierName" placeholder="Filter by Supplier name..." style="margin-top: 18px;" required />
+							<input type="submit" id="searchsubmitInInvoice" value="Filter by Supplier " class="btn btn-info" style="background-color:green;font-size:14px;" required />
+							</td>
+							</tr>
+	            	</table>
+	        
+	}*@
+	
+		<!-- display list based on selected date -->
+		
+			@if(invoiceList.size() == 0) {
+        
+		        <div class="well" style="height:15px;padding: 10px 0px 25px 20px;">
+		            <em>Nothing to display</em>
+		        </div>
+		        
+		    } else {
+		        <div class="table-responsive">
+		        	<table class="table table-hover  table-striped"  style="background-color: beige;">
+		        		<thead style="background-color: gainsboro;">
+		                <tr>
+		                    <th>File Name</th>
+		                    
+		                    <th>Uploaded Date</th>
+		                    
+		                    <th>InvoiceType</th>
+		                    
+		                    <th>Store</th>
+		                    
+		                    <th>Status</th>
+		                    
+		                </tr>
+		            </thead>
+		            <tbody>
+		
+		                @for(invoice <- invoiceList) {
+		                    <tr>
+		                        @*<td><a href="/INVOICEPROCESSINGSYSTEM/@invoice.filePath" class="fancyboxPDF" title="@invoice.fileName" onclick="OpenFancyBoxForJustView('@invoice.id');">@invoice.fileName</a></td>*@
+		                        <td><a href="@routes.Application.checkUrl(invoice.filePath)" class="fancyboxPDF" title="@invoice.fileName" onclick="OpenFancyBoxForJustView('@invoice.id');">@invoice.fileName</a></td>
+		                        <td>@invoice.uploadedDate</td>
+		                        <td>@invoice.invoiceType</td>
+		                        <td>@Store.find.byId(invoice.storeId)</td>
+		                        <td>@invoice.status</td>
+		                    </tr>
+		                }
+		
+		            </tbody>
+		         </table>
+		       </div>
+		        
+		    }
+			</div>
+        	</div>
+		</div>
+	</div>
+		<input type="hidden" id="statusSelectedInInvoice" name="statusSelectedInInvoice" value="@invoiceStatus">
+	
+} <!-- main ends -->

@@ -1,0 +1,98 @@
+@(page : String)
+
+
+
+@link(action:String) = @{
+
+    
+   
+    var url = page+"_"+action
+   	url
+    
+}
+
+
+@main{               
+        
+        <div class="wrapper">
+            <div class="container" >
+			    <div class="row">
+                   <div class="span12">
+       					<span class="homeButtonSpan">
+        					<div id="bc1" class="btn-group btn-breadcrumb">
+            					<a href="@routes.Application.index()" class="btn btn-success" style="height: 25px;padding: 2px 20px 0px 10px;margin-top: -10px;"><i class="icon-home"></i></a>
+            					<a href="#" class="btn btn-default" style="font-size: 10px;height: 25px;margin-top: -11px;padding:4px 10px 7px 20px;">@page</a>
+        					</div>
+        				</span>
+        
+         				<span class="pull-right" style="padding-right:180px;">
+           					<div>
+            					<a href="@routes.Application.index()" class="btn btn-default" style="font-size: 11px;padding: 3px 6px 1px 2px;"><i class="icon-arrow-left" style="font-size: 10px;"></i>BACK</a>
+        					</div>
+        				</span>      
+            		
+        		</div>
+                     	<br><br>
+            
+                        <div class="content mgTabStyles" style="margin-top: 14px;">
+                            <div class="btn-controls">
+                                <div class="btn-box-row  row-fluid">
+                        			<div class="col-sm-6 col-md-6 manage1TabStyles">
+									      <div class="panel panel-success mgTabStyles1">
+									        <div class="panel-heading panelstyles">ADD</div>
+                                				<div class="panel-body panelbodystyles">
+				                                    <a href="@routes.Application.showOptions(page,"ADD")"><img src="@routes.Assets.at("images/tabImages/add.png")" class="img-responsive center-block" alt="Image" style="width:15%">
+				                                    </a>
+				                                     <p class="text-muted" style="font-size:10px;">
+                                            				ADD TIMESHEET</p>
+				                                     </div>
+										   		</div> 
+										  		</div>
+                                <div class="col-sm-6 col-md-6 manage1TabStyles viewDeleteStyles">
+									<div class="panel panel-success mgTabStyles1">
+									 	<div class="panel-heading panelstyles">VIEW</div>
+                                			<div class="panel-body panelbodystyles">
+				                                 	<a href="@routes.Application.showOptions(page,"VIEW")"><img src="@routes.Assets.at("images/tabImages/view.jpg")" class="img-responsive center-block" alt="Image" align="middle"  style="width:19%">
+				                                    </a>
+				                                     <p class="text-muted" style="margin-top:5px;font-size:10px;">
+				                                            VIEW TIMESHEET</p>
+				                                     </div>
+											   		</div> 
+											  	</div>
+                                </div>
+                            </div>
+                        </div> <!-- content -->
+                        
+                      @*  <div class="content">
+                            <div class="btn-controls">
+                                <div class="btn-box-row row-fluid">
+                                @if((session.get("role")).contains("sa")){
+                                
+                                    <a href="@routes.Application.showOptions(page,"MODIFY")" class="btn-box big span6"><i class="icon-edit"></i><b>MODIFY</b>
+                                        <p class="text-muted">
+                                            @page</p>
+                                    </a>
+                                    
+                                    <a href="@routes.Application.showOptions(page,"DELETE")" class="btn-box big span6"><i class="icon-trash"></i><b>DELETE</b>
+                                        <p class="text-muted">
+                                            @page</p>
+                                    </a>
+                                    }
+                                                                      
+                                </div>
+                             </div>
+                         </div> <!-- content -->*@
+                                   
+				        <div class="footer">
+				          <hr/ style="width: 70%;margin-left: 17%;">   
+				            <div class="container">
+				               <p  style="margin-left: 66%;"> <b class="copyright">&copy; 2014 SRINI Group &nbsp;</b>All rights reserved.</p>
+				            </div>
+					 </div> <!-- footer -->
+        
+       				</div> <!-- span 12 -->
+       			</div> <!-- row -->
+      		</div> <!-- container -->
+ 		</div> <!-- wrapper -->
+    
+    }

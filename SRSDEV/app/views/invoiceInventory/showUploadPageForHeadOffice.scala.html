@@ -1,0 +1,97 @@
+@import helper._ 
+@import helper.twitterBootstrap._
+
+@main{
+	
+	<div class="wrapper">
+     	<div class="container" >
+			 <div class="row">
+            	<div class="span12 widthFor3TabStyles">
+               		 <span>
+                    	<div id="bc1" class="btn-group btn-breadcrumb">
+       						<a href="@routes.Application.index()" class="btn btn-success homeButStyl"><i class="icon-home"></i></a>
+            				<a href="#" class="btn btn-default" id="homeButtonStyles">UPLOAD</a>
+      					</div>
+        			</span>
+            		<span class="pull-right backButPositionStyle">
+           				 <div>
+           					<a href="@routes.Application.index()" class="btn btn-default backButtonStyl"><i class="icon-arrow-left"></i>BACK</a>
+          				 </div>
+        			</span>
+        		
+         		 <br><br>
+         		 
+         	@if(flash.containsKey("success")) {
+		         <div class="alert alert-warning shiftEditTableStyles shiftEditTableFonts" style="padding:5px;">
+		            <b style="font-size:12px">Done!</b>@flash.get("success")
+		        </div>
+		    } 
+	
+	@helper.form(action = routes.InvoiceInventory.uploadInvoicesByHeadOffice(),'enctype -> "multipart/form-data") {
+	
+			<div class="table-responsive  shiftEditTableStyles shiftEditTableFonts">
+  				<table style="background-color: white;border-color: #fff;" class="table table-bordered shiftEditTableFonts">
+  					<tr>
+  						<td>
+            				<div class="clearfix" id="storeId_field">
+								<label for="storeId" id="pageTextFontSize">Select Store</label>
+									<div>
+										<select name="storeId" id="invoiceStoreList" required>
+						            		<option class="blank" value="" >-- Choose a Store --</option>
+						  					@for(store <- Stores.getStoresList()){
+						  						<option value="@store.id" >@store.name</option>
+						  					}
+						  				</select>
+									    <span class="help-inline"></span>
+									</div>
+							</div>
+					  	</td>
+            			<td>
+            				<div class="clearfix" id="invoiceType_field">
+								<label for="invoiceType" id="pageTextFontSize">InvoiceType</label>
+									<div>
+										<select name="invoiceType" required>
+						            		<option class="blank" value="">-- Choose a Invoice Type --</option>
+						  					<option value="CashPaid">CashPaid</option>
+						  					<option value="Others">Others</option>
+						  					<option value="Statements">Statements</option>
+						  					<option value="Fuel">Fuel</option>
+						  				</select> 
+									    <span class="help-inline"></span>
+									</div>
+							</div>
+					  	</td>
+					  	<td>
+            				<div class="clearfix" id="invoiceFiles_field">
+								<label for="invoiceFiles" id="pageTextFontSize">Select Files</label>
+									<div>
+										<input type="file" id="invoiceFiles" name="invoiceFiles" accept="application/pdf" multiple="multiple" onchange="updateList()" required />
+									    <span class="help-inline"></span>
+									</div>
+							</div>
+					  	</td>
+					  	<td>
+							<input type="submit" value="Upload" class="btn btn-primary" onclick="return invoiceformValidation()" style="margin-top: 10px;font-size: 10px; padding: 6px;">					  		
+					  	</td>
+            		</tr>
+            	</table>
+         	</div>
+		
+		 
+        
+        <span id="displaySelected" style="display:none;color:#fff;"><b style="color:#fff;">Selected Invoices:</b></span>
+		<div id="fileList"class="shiftEditTableStyles" style="background-color: white;border-color: #fff;"></div><br/>
+		
+        
+        
+	
+	} <!-- form ends -->
+	<div class="shiftEditTableStyles">
+		<a href="@routes.InvoiceInventory.dateSelectPageForHeadOffice()" class="pull-right btn btn-success" style="font-size: 10px;padding: 3px 10px 3px 10px;">Uploaded invoices</a>
+	</div>
+				</div>
+        	</div>
+		</div>
+	</div>
+	
+} <!-- main ends -->

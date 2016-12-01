@@ -1,0 +1,139 @@
+@(invoiceList : List[Invoice], paymentTerms : String, refInvoiceId : Long, currentFilter : String,selectedCompany : String,selectedStore :String,selectedCategory :String,selectedPaymentTerm:String,selectedCategoryForBack:String)
+
+@import helper._ 
+@import helper.twitterBootstrap._
+ 
+@currentDateFormat(currDate:Date) = @{
+  import java.util.Calendar
+  import java.text.SimpleDateFormat
+
+ 
+  val curTimeFormat = new SimpleDateFormat("dd/MM/yyyy")
+
+  curTimeFormat.format(currDate)
+}
+
+@main {
+   <!-- Fancybox css -->
+	<link rel="stylesheet" href="@routes.Assets.at("fancybox/jquery.fancybox.css?v=2.1.5")" type="text/css" media="screen" /> <!-- Fancybox css -->
+	<script type="text/javascript" src="@routes.Assets.at("fancybox/jquery.fancybox.pack.js?v=2.1.5")"></script> <!-- Fancybox js, need jquery advanced -->
+	<!-- Fancybox css --> 
+  <div class="wrapper">
+     	<div class="container" >
+			 <div class="row">
+            	<div class="span12 widthFor3TabStyles">
+               		 <span>
+                    	<div id="bc1" class="btn-group btn-breadcrumb">
+       						<a href="@routes.Application.index()" class="btn btn-success homeButStyl"><i class="icon-home"></i></a>
+            				<a href="@routes.InvoiceInventory.showPaymentPage("noCompany","noStore","noCategory","noPaymentTerm")" class="btn btn-default" id="homeButtonStyles">PAYMENT</a>
+            				<a href="#" class="btn btn-default" id="homeButtonStyles">LIST</a>
+      					</div>
+        			</span>
+            		<span class="pull-right backButPositionStyle">
+           				 <div>
+           					<a href="@routes.InvoiceInventory.showPaymentPage(selectedCompany,selectedStore,selectedCategoryForBack,selectedPaymentTerm)" class="btn btn-default backButtonStyl"><i class="icon-arrow-left"></i>BACK</a>
+          				 </div>
+        			</span>
+        		
+         		 <br><br>
+  
+      @if(flash.containsKey("success")) {
+        <div class="alert alert-warning shiftEditTableStyles shiftEditTableFonts" style="padding:5px;">
+		            <b style="font-size:12px">Done!</b>@flash.get("success")
+        </div>
+    }
+   
+   <div id="actions">
+        
+        <form action="@routes.InvoiceInventory.filterPaymentInvoices(selectedCompany,selectedCategoryForBack)" method="GET">
+        	<p class="pull-left" style="padding-top:-10px">
+            	<input type="search" id="searchbox" name="f" value="@currentFilter" class="textBoxesStyles" placeholder="Filter by Supplier name..." style="font-size:10px;">
+            	<input type="hidden"  name="refInvoiceId" value="@refInvoiceId"/>
+            	<input type="hidden"  name="paymentTerms" value="@paymentTerms"/>
+            	<input type="submit" id="searchsubmit" value="Filter by Supplier" class="btn btn-info" style="font-size: 10px;padding:1px 7px 2px 4px;">
+          	</p>
+             
+        </form>
+          
+    </div>  
+   
+    
+    @if(invoiceList.size() == 0) {
+        
+        <div class="well shiftTableStyles shiftEditTableFonts" style="padding: 2px 0px 25px 20px;">
+            <em>Nothing to display</em>
+        </div>
+        
+    } else {
+        <div class="table-responsive shiftTableStyles shiftEditTableFonts">
+        	<table class="table table-hover  table-striped"  style="background-color: beige;">
+        		<thead style="background-color: gainsboro;">
+                <tr>
+                    <th>File Name</th>
+                    
+                    <th>Invoice Date</th>
+                    
+                    <th>Invoice category</th>
+                    
+                    <th>Supplier</th>
+                    
+                    <th>Payment Term</th>
+                    
+                    <th>Company</th>
+                    
+                    <th>Store</th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+
+                @for(invoice <- invoiceList) {
+                    <tr>
+                        <td>
+                        	@if(currentFilter.equals("")){ <!-- if current Filter is empty send a dummy value for filter, check that in server side -->
+                        	
+                        		@*<a href="/INVOICEPROCESSINGSYSTEM/@invoice.filePath" class="fancyboxPDF" title="@invoice.fileName" onclick="OpenFancyBoxForPaymentDone('@invoice.id','@paymentTerms','EMPTY','@selectedCategory');">@invoice.fileName</a>*@
+                        		<a href="@routes.Application.checkUrl(invoice.filePath)" class="fancyboxPDF" title="@invoice.fileName" onclick="OpenFancyBoxForPaymentDone('@invoice.id','@paymentTerms','EMPTY','@selectedCategory');">@invoice.fileName</a>
+                        	}else{
+                        		@*<a href="/INVOICEPROCESSINGSYSTEM/@invoice.filePath" class="fancyboxPDF" title="@invoice.fileName" onclick="OpenFancyBoxForPaymentDone('@invoice.id','@paymentTerms','@currentFilter','@selectedCategory');">@invoice.fileName</a>*@
+                        		<a href="@routes.Application.checkUrl(invoice.filePath)" class="fancyboxPDF" title="@invoice.fileName" onclick="OpenFancyBoxForPaymentDone('@invoice.id','@paymentTerms','@currentFilter','@selectedCategory');">@invoice.fileName</a>
+                        	}
+                        </td>
+                        <td>@currentDateFormat(invoice.invoiceDate)</td>
+                        @if(invoice.companyId != null){
+                        	<td>@Invoice.getParentDirectory(invoice.filePath)</td>
+                        }else{
+                        	<td>@selectedCategoryForBack </td>
+                        }
+                        @if(invoice.companyId != null){
+                        	<td> - </td>
+                        }else{
+                        	<td>@Invoice.getParentDirectory(invoice.filePath)</td>
+                        }
+                        <td>@invoice.paymentMode</td>
+                        @if(invoice.companyId != null){
+                        	<td>@Company.find.byId(invoice.companyId).name</td>
+                        }else{
+                        	<td> - </td>
+                        }
+                        <td>@Store.find.byId(invoice.storeId)</td>
+                    </tr>
+                }
+
+            </tbody>
+         </table>
+       </div>
+        
+    }
+    <input type="hidden" id="paymentSelectedPaymentTerm" name="paymentSelectedPaymentTerm" value="@selectedPaymentTerm">
+    <input type="hidden" id="paymentSelectedInvoiceType" name="paymentSelectedInvoiceType" value="@selectedCategory">
+	<input type="hidden" id="paymentSelectedCompany" name="paymentSelectedCompany" value="@selectedCompany">
+	<input type="hidden" id="paymentSelectedStore" name="paymentSelectedStore" value="@selectedStore">
+    	</div>
+       </div>
+     </div>
+    </div>
+   				
+}
+
+            

@@ -1,0 +1,293 @@
+@(timesheetForm: Form[Timesheet],timesheet:Timesheet,store:Store,emp:Employee)
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script> 
+	    <link href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/ui-darkness/jquery-ui.min.css" rel="stylesheet">
+ 
+</script>
+<script>
+ $(function() {
+  
+	$( ".startDatePicker" ).datepicker({  
+    maxDate: new Date(),
+    beforeShow: function(){    
+         $(".ui-datepicker").css('font-size', 12) 
+   	},
+    onSelect: function(){
+    var selected = $(this).val();
+    $(".endDatePicker").val(selected)
+    }
+    ,dateFormat: "dd/mm/yy"});
+	
+		});
+</script>
+@import helper._
+ @import helper.twitterBootstrap._
+
+@checkSelectedLeave(leaveType:String)= @{
+                   val result="selected"
+                   if((timesheet.leaveType != null) && (timesheet.leaveType.equals(leaveType))){
+                      result
+                   }
+                   
+}
+
+@checkBoxForLeave()= @{
+                   val result="checked"
+                   if( (timesheet.leaveType != null) && (timesheet.leaveType.equals("AL") || timesheet.leaveType.equals("SL") || timesheet.leaveType.equals("PH") )){
+                      result
+                   }
+                   
+}
+
+ @checkSelected(jobTitle:String,id:String)= @{
+                   val result="selected"
+                   if(jobTitle==id){
+                      result
+                   }
+                   
+}
+
+@checkSelectedDuration(jobTitle:String,id:Int) = @{  <!-- in DB values are stored as String, that's y convert into int for integer comparison -->
+
+		val result="selected"
+			if(jobTitle != null){   <!-- check for Null ,for the Timesheets which are Created when shift add -->
+				if(jobTitle.toInt==id){
+					result
+				}
+			}
+			
+}
+            
+
+@currentDateFormat(currDate:Date) = @{
+  import java.util.Calendar
+  import java.text.SimpleDateFormat
+
+ 
+  val curTimeFormat = new SimpleDateFormat("dd/MM/yyyy")
+ 
+  if(currDate != null){
+  
+  	curTimeFormat.format(currDate)
+  }
+  
+}
+
+
+@import java.lang.String; var fieldView = "";
+
+@if(flash.get("pageAction").equals("VIEW") || flash.get("pageAction").equals("DELETE")){
+
+	@{fieldView="disabled"}
+
+}
+
+@import java.lang.String; var display = "";
+
+@if((timesheet.status).equals("APPROVED") ){
+					
+					@{display="disabled"}
+}
+
+
+@main{
+ 
+	
+	<div class="wrapper">
+     	<div class="container" >
+			 <div class="row">
+            	<div class="span12 widthFor3TabStyles">
+               		 <span>
+                    	<div id="bc1" class="btn-group btn-breadcrumb">
+       						<a href="@routes.Application.index()" class="btn btn-success homeButStyl"><i class="icon-home"></i></a>
+            				<a href="@routes.Application.showOptions("ADD TIMESHEET","ALL")" class="btn btn-default" id="homeButtonStyles">TIMESHEET</a>
+            				<a href="#" class="btn btn-default" id="homeButtonStyles">@flash.get("pageAction")</a>
+      					</div>
+        			</span>
+            		<span class="pull-right backButPositionStyle">
+           				 <div>
+           					<a href="@routes.Application.showOptions("ADD TIMESHEET",flash.get("pageAction"))" class="btn btn-default backButtonStyl"><i class="icon-arrow-left"></i>BACK</a>
+          				 </div>
+        			</span>
+        		
+         		 <br><br>
+
+
+	@if(flash.containsKey("success")) {
+        <div class="alert alert-warning shiftEditTableStyles shiftEditTableFonts" style="padding:5px;">
+			<b style="font-size:12px;">Done!</b> @flash.get("success")
+        </div>
+    } 
+
+   
+ 
+	<form action ="@routes.Timesheets.updateEditListForRejectedTS(timesheet.id,store.id)" method="POST" id="hOTEditTimesheetForm"  onsubmit="return checkHOTTimesheetExistsInEditPage('@timesheet.id');"> 
+
+
+			<h2 style="color:#fff;font-size:14px;">Time Sheet Details</h2>
+			<hr/ class="shiftEditTableStyles">
+		
+        <input type="text" value="@timesheet.empid" id="empid" name="empid" readonly='readonly' style="display:none;"/><h1 style="color:#fff;font-size:13px;">@emp.firstName.@emp.lastName</h1>
+        	
+          			<div class="table-responsive  shiftEditTableStyles shiftEditTableFonts"> 
+        				<table class="table table-bordered" style="background-color: white;border-color: #fff;font-size:12px;">
+							<tr>
+									@if(Shift.timesheetWithShift(timesheet.id) != null){
+									
+										@*Employee: <b>@Employee.find.byId(timesheet.empid)</b>*@
+										<input type="hidden" id="empid" name="empid" value="@timesheet.empid"/>
+									
+									}else{
+									
+									@*		@select(
+						                timesheetForm("empid"), 
+						                options(Employee.options(store.id)), 
+						                '_label -> "Employee", 'required -> "true", '_default -> "-- Choose a Employee --",
+						                '_showConstraints -> false
+										
+										)*@
+									
+									}
+									
+								<td> 
+								
+									<div class="clearfix" id="date_field">
+    									<label for="date">Date</label>
+											<input type="text" id="hoEditStartDate" name="hoEditStartDate" class="startDatePicker" value="@currentDateFormat(timesheet.date)" required/>
+		    								<input type="hidden" id="hoEditEndDate" name="hoEditEndDate" class="endDatePicker" value="@currentDateFormat(timesheet.endDate)" required/>
+		    								<label id="hoEditDateErrorLabel" style="display:none; color:red">Please Select Date.</label>
+									</div> 
+								</td>
+								@if(timesheet.leaveType != "None"){
+								<td>
+									 <input type="checkbox" name="applyLeaveCheckBoxInHOEdit" id="applyLeaveCheckBoxInHOEdit" @checkBoxForLeave() /> Leave
+									 
+									<div class="clearfix" id="leaveType_fieldInHoEdit">
+    									<label for="leaveType">Leave Type</label>
+    										<div class="input">
+    											<select id="leaveTypeInHOEdit" name="leaveTypeInHOEdit" required value="@timesheet.leaveType">
+    												 <option class="blank" value="">-- Choose Type --</option>
+										             <option value="AL" @checkSelectedLeave("AL") >AL</option>
+							                         <option value="SL" @checkSelectedLeave("SL") >SL</option>
+							                         <option value="PH" @checkSelectedLeave("PH") >PH</option>
+							                    </select> 
+    										</div>
+									</div>
+									<input type="hidden" id="hOTEditTextarea" name="hOTEditTextarea"  value="no_activity">
+									<input type="hidden" id="hoEditStartTimeHour" name="hoEditStartTimeHour" value="@timesheet.startTimeHour">
+									<input type="hidden" id="hoEditStartTimeMins" name="hoEditStartTimeMins" value="@timesheet.startTimeMins">
+									<input type="hidden" id="hoEditEndTimeHour"   name="hoEditEndTimeHour" value="@timesheet.endTimeHour">
+									<input type="hidden" id="hoEditEndTimeMins" name="hoEditEndTimeMins" value="@timesheet.endTimeMins">
+									<input type="hidden" id="durationInHoEdit" name="durationInHoEdit" value="@timesheet.duration">
+									<input type="hidden" id="hoEditDateErrorLabel">
+									<input type="hidden" id="startTimeHourEditErrorLabel">
+							        <input type="hidden" id="startTimeMinsEditErrorLabel">
+							        <input type="hidden" id="endTimeHourEditErrorLabel">
+							        <input type="hidden" id="endTimeMinsEditErrorLabel">
+									<input type="hidden" id="hoActivityEditErrorLabel" >
+									
+								</td>
+								} else{
+								<input type="hidden" id="leaveTypeInHOEdit" name="leaveTypeInHOEdit" value="@timesheet.leaveType">
+								
+								<td colspan="2" id="hOTEditTextareaLabel">
+									Activity:
+									<textarea id="hOTEditTextarea" name="hOTEditTextarea" style="height:80%;width:100%">@timesheet.activity</textarea>								
+									<label id="hoActivityEditErrorLabel" style="display:none; color:red">Please Enter Activity</label>
+								</td>						
+										
+								<tr>
+								
+								<td>
+									<div class="clearfix  " id="HOTimesheetEditStartTime_field">
+    									<label for="HOTimesheetEditStartTime">Start Time</label>
+    										<div class="input">
+    											<select id="hoEditStartTimeHour" name="hoEditStartTimeHour"  required onblur="durationEditHeadOfficeTimeSheetFromStartEnd()">
+    												 <option value="">--Hours--</option>
+										             @for(i <- 0 to 9) {
+    													<option value="0@i" @checkSelectedDuration(timesheet.startTimeHour,i)>0@i</option>
+													 }
+													  @for(i <- 10 to 23) {
+    													<option value="@i" @checkSelectedDuration(timesheet.startTimeHour,i)>@i</option>
+													 }
+							                    </select>
+							                    
+							                    <select id="hoEditStartTimeMins" name="hoEditStartTimeMins" required onblur="durationEditHeadOfficeTimeSheetFromStartEnd()">
+    												 <option value="">--Mins--</option>
+										            <option value="00" @checkSelected(timesheet.startTimeMins,"00")>00</option>
+							                         <option value="15" @checkSelected(timesheet.startTimeMins,"15")>15</option>
+							                         <option value="30" @checkSelected(timesheet.startTimeMins,"30")>30</option>
+							                         <option value="45" @checkSelected(timesheet.startTimeMins,"45")>45</option>
+							                    </select> 
+							                    <label id="startTimeHourEditErrorLabel" style="display:none; color:red">Please Select Start Hours.</label>
+							                    <label id="startTimeMinsEditErrorLabel" style="display:none; color:red">Please Select Start Mins.</label>
+    										</div>
+									</div>
+								</td>
+								
+								<td>
+									<div class="clearfix  " id="HOTimesheetEditEndTime_field">
+    									<label for="HOTEdittimesheetEndTime">End Time</label>
+    										<div class="input">
+    											<select id="hoEditEndTimeHour" name="hoEditEndTimeHour" required onblur="durationEditHeadOfficeTimeSheetFromStartEnd()">
+    												 <option value="">--Hours--</option>
+    												 @for(i <- 0 to 9) {
+    													<option value="0@i" @checkSelectedDuration(timesheet.endTimeHour,i)>0@i</option>
+													 }
+													  @for(i <- 10 to 23) {
+    													<option value="@i" @checkSelectedDuration(timesheet.endTimeHour,i)>@i</option>
+													 }
+    												
+							                    </select>
+							                    
+							                    <select id="hoEditEndTimeMins" name="hoEditEndTimeMins"  required onblur="durationEditHeadOfficeTimeSheetFromStartEnd()">
+    												 <option value="">--Mins--</option>
+										             <option value="00" @checkSelected(timesheet.endTimeMins,"00")>00</option>
+							                         <option value="15" @checkSelected(timesheet.endTimeMins,"15")>15</option>
+							                         <option value="30" @checkSelected(timesheet.endTimeMins,"30")>30</option>
+							                         <option value="45" @checkSelected(timesheet.endTimeMins,"45")>45</option>
+							                    </select> 
+							                     <label id="endTimeHourEditErrorLabel" style="display:none; color:red">Please Select End Hours.</label>
+							                     <label id="endTimeMinsEditErrorLabel" style="display:none; color:red">Please Select End Mins.</label>
+    										</div>
+									</div>
+								</td>
+								<td>
+								<div>
+								<label id="HOTimesheetEditDuration_field">Duration :</label>
+								<input type="text" id="durationInHoEdit" name="durationInHoEdit" value="@timesheet.duration" name="durationInHoEdit" style="margin-top: 15px;">
+								</div>
+								</td>	
+								}
+									<input type="hidden" name="firmid" value="@store.id"/>
+							</tr>
+						</table>
+					</div>
+            
+      	
+      	      	
+      	<!-- bottom div ,for submit and cancel button's -->
+        <div class="shiftEditTableStyles" style="height:50px; margin-right:50px;  margin-top:10px;">
+        	<div>
+            	<p style="text-align: right; /">  
+				@if((flash.get("pageAction")).equals("MODIFY") || (flash.get("pageAction")).equals("VIEW")){
+					<input type="submit" class="btn btn-large btn-success" @display class="btn btn-large btn-success" style="padding-right:30px;font-size:12px; padding-left:30px; text-align:center;" >&nbsp;&nbsp;
+					
+				}
+				@if((flash.get("pageAction")).equals("DELETE")){
+					
+	 				<a href="@routes.Timesheets.delete(timesheet.id)" class="btn btn-danger">Delete</a>
+	 				
+	 			}
+ 				</p>
+		    </div>
+        </div>
+
+</form>
+		</div>
+       </div>
+	</div>
+	</div>
+
+}<!-- main end -->

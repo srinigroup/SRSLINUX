@@ -1,0 +1,202 @@
+
+@(id:Long, dsrForm: Form[DailySalesReconciliation],dsrObject:DailySalesReconciliation, store: Store )
+ @import helper._ 
+ @import helper.twitterBootstrap._
+ 
+ @currentDateFormat(currDate:Date) = @{
+  import java.util.Calendar
+  import java.text.SimpleDateFormat
+
+ 
+  val curTimeFormat = new SimpleDateFormat("dd/MM/yyyy")
+
+  curTimeFormat.format(currDate)
+}
+@import java.math.BigInteger; var i=0;var j=0;
+
+
+@import java.lang.String; var display = "";
+
+@main{
+
+	<div class="wrapper" style="min-height:700px">
+     	<div class="container" >
+			 <div class="row pageWidthDecreStyles">
+		 		<div class="col-md-6">
+	            	<div id="bc1" class="btn-group btn-breadcrumb">
+						<a href="@routes.Application.index()" class="btn btn-success homeButStyl"><i class="icon-home"></i></a>
+						@if((session.get("role")).contains("sm") || (session.get("role")).contains("sk")){
+	    					<a href="@routes.Application.showOptions("SALES RECONCILIATION","ALL")" class="btn btn-default" id="homeButtonStyles">SALES RECONCILIATION</a>
+	    					<a href="#" class="btn btn-default" id="homeButtonStyles">@flash.get("pageAction")</a>
+	    				}
+					</div>
+  				</div>
+  				<div class="col-md-6">
+        			<span class="pull-right">
+	       				 <div>
+	       				 	@if((session.get("role")).contains("sm") || (session.get("role")).contains("sk")){
+	       						<a href="" onclick="goBack()" class="btn btn-default backBtnStylesInAll"><i class="icon-arrow-left"></i>BACK</a>
+	       					}
+	       					@if((session.get("role")).contains("admin") || (session.get("role")).contains("su")
+	       					 || (session.get("role")).contains("ac") || (session.get("role")).contains("sa")|| (session.get("role")).contains("HeadOffice Accountant")){
+	       						<a href="" onclick="goBack()" class="btn btn-default backBtnStylesInAll"><i class="icon-arrow-left"></i>BACK</a>
+	       					}
+	      				</div>
+    			</span>
+        	</div>
+         	<br><br>
+		    @if(flash.containsKey("success")) {
+		        <div class="alert alert-warning shiftEditTableFonts" style="padding:5px;">
+				            <b style="font-size:12px">Done!</b>@flash.get("success")
+		        </div>
+		    } 
+     		<div class="col-lg-12">
+				@helper.form(action = routes.DailySalesReconciliations.update(id)) {
+					<style>
+						table {
+						height: 5px;
+					    border: 1px solid black;
+				    	}
+					</style>
+					
+					<h3 style="font-size:15px;color:#fff;">@store.name</h3>
+					<hr/>
+					<div class="table-responsive panel panel-success shiftEditTableFonts">
+						<table class="table table-bordered">
+				            <thead class="panel-heading"  style="background-color:#9FDF9F">
+				               <tr style="background-color:#9fdf9f">
+				                 	 <th>Created Date</th>
+				                     <th>Reporting Business Date</th>
+				                   	 <th>Total Sales Reported</th>
+				                      <th>Total Media Collected</th>
+				                      <th>Register Payouts</th>
+				                      <th>Other Payouts</th>
+				                      <th>CashOuts</th>
+				                      <th>Variance</th>
+				                      <th>Status</th>
+				               </tr>
+				            </thead>
+				            <tbody>
+	
+			                    <tr>
+			                        <td>@currentDateFormat(dsrObject.todayDate)</td>
+			                        
+			                        <td>@currentDateFormat(dsrObject.reportingBusinessDate) </td>
+			                     
+			                        <td> @DailySalesReconciliation.getTotalSalesAmount(dsrObject) </td>
+			                        
+			                        <td> @DailySalesReconciliation.getTotalMediaCollected(dsrObject) </td>
+			                        
+			                        <td> @DailySalesReconciliation.getTotalPayouts(dsrObject) </td>
+			                        
+			                        <td> @DailySalesReconciliation.getOtherPayouts(dsrObject)</td>
+			                          
+			                        <td> @DailySalesReconciliation.getTotalCashOuts(dsrObject)</td>
+			                       
+			                        <td> @DailySalesReconciliation.getVarianceAmount(dsrObject)</td> 	
+			                        	
+			                       	<td>
+										@select(
+						  				 dsrForm("status"),
+						  				 options(Seq("OPEN","SUBMITTED")),
+						 				  '_default -> "-- Select Status --"
+										)
+									</td>
+		                 		</tr>
+	            			</tbody>
+				        </table>
+				       </div>
+						<br>
+						<ul class="tabs shiftEditTableFonts" style="width:75%;">
+							@for(terminalHead <- store.terminalHeads) {
+							  			  		  
+								@if(Terminal.getShiftsbyTerminalHead(dsrObject,terminalHead.name)!=null){
+									@{i =i+1}	
+						              <li rel="tab@i">@terminalHead.name</a></li>
+						        }
+				            }
+						</ul>
+	                   	<div class="tab_container shiftEditTableFonts">
+							@for(terminalHead <- store.terminalHeads) {
+								 @{j =j+1}	
+								<h3 class="d_active tab_drawer_heading drTabTextSize" rel="tab@j">@terminalHead.name</h3>
+								<div id="tab@j" class="tab_content">
+									@if(Terminal.getShiftsbyTerminalHead(dsrObject,terminalHead.name).size()>0){	
+			 							<div >
+			    							<p class="pull-right" style="padding-right:10px"><a href="javascript:window.open('@routes.Terminals.summary(dsrObject.id,terminalHead.name)','_blank','toolbar=yes')" class="btn btn-success" style="font-size: 10px;padding: 5px;">View Summary</a></p>
+		 								</div>
+			  						<br><br>
+			  						<div class="table-responsive">
+									<table class="table table-bordered">
+			  							<thead>
+			    							<tr style="background-color:#9FDF9F">
+		        								<th>Shift StartTime</th>
+		        								<th>Shift EndTime</th>
+		        								<th>Shift Sales</th>
+		        								<th>Media Collects</th>
+		        								<th>Register Payouts</th>
+		        								<th>Other Payouts</th>
+		        								<th>CashOuts</th>
+		        								<th>Variance</th>
+		        								<th>Shift Owner</th>
+		        								<th>Status</th> 
+		        							</tr>
+		    							</thead>
+		  							 @if((dsrObject.status).equals("SUBMITTED")){
+										@{display="disabled"}
+									}
+		    						@for(shift <- Terminal.getShiftsbyTerminalHead(dsrObject,terminalHead.name)) {
+					
+										@if(!(shift.status).equals("SUBMITTED")){
+											@{display="disabled"}
+										}
+		      							<tbody>
+											<tr>
+												<td><a href="@routes.Shifts.edit(shift.id, store.id,flash.get("pageAction"))">@shift.shiftStartDateTime</a></td>						
+												<td>@shift.shiftEndDateTime</td>						
+												<td>@Shift.getTotalSales(shift)</td>		
+												<td>@Shift.getTotalMedialCollected(shift)</td>		
+												
+												<td>@Shift.getTotalPayoutsbyType(shift,"REGISTERPAYOUT")</td>
+												<td>@ShiftPaymentTender.getShiftPaymentsTotalAmount(shift)</td>
+												<td>@Shift.getShiftPaymentTenderAmount(shift.shiftPayments,Application.propertiesMap.get("PAYMENT_TENDER_CASHOUT"))</td>		
+												<td>@Shift.getTotalVariance(shift)</td>
+														
+												<td>@Timesheet.getEmployee(shift)</td>		
+												<td>@shift.status </td>	
+											</tr>	
+										</tbody>
+									}
+								</table>
+								</div>
+		     					}
+		 						@if(!(Terminal.getShiftsbyTerminalHead(dsrObject,terminalHead.name).size()>0)){
+		  							<div class="well">
+		    							<em>Nothing to display</em>
+									</div>
+								}
+		 					</div>  
+						}
+					</div>	<!-- tab container -->		
+	 			
+			      	<!-- bottom div ,for submit and cancel button's -->
+			        <div  class="shiftEditTableStyles" style="height:50px; margin-right:50px;  margin-top:10px;">
+			        	<div>
+			        		
+			            	<p style="text-align: right;">  
+							
+								@if((flash.get("pageAction")).equals("MODIFY")){
+									
+									<input type="submit" class="btn btn-large btn-success" style="padding-right:30px; padding-left:30px; text-align:center;font-size:12px;" @display>&nbsp;&nbsp;
+								}
+							</p>
+					    </div>
+			        </div>
+	  
+					}<!-- form end -->
+				</div>
+        	</div>
+		</div>
+	</div>
+
+}<!-- main end -->

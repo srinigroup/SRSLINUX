@@ -1,0 +1,219 @@
+@(currentPage: com.avaje.ebean.Page[DailySalesReconciliation], currentSortBy: String, currentOrder: String, currentFilter: String, store:Store, pageAction: String)
+
+
+@****************************************
+* Helper generating navigation links    *
+****************************************@
+@link(newPage:Int, newSortBy:String) = @{
+    
+    var sortBy = currentSortBy
+    var order = currentOrder
+    
+    if(newSortBy != null) {
+        sortBy = newSortBy
+        if(currentSortBy == newSortBy) {
+            if(currentOrder == "asc") {
+                order = "desc"
+            } else {
+                order = "asc"
+            }
+        } else {
+            order = "asc"
+        }
+    }
+    
+    // Generate the link
+    routes.DailySalesReconciliations.list(newPage, sortBy, order, currentFilter, pageAction)
+    
+}
+
+@checkSelected(newFilter:String) = @{
+
+	var result=""
+ if(currentFilter == newFilter){
+	result="selected"
+ }
+ 	result
+ 
+}
+
+@display()= @{
+
+var result = "";
+
+		if(DailySalesReconciliations.getOPENStatus(store.id)){
+		   result = "disabled";
+		}							  
+
+result;
+}
+@currentDateFormat(currDate:Date) = @{
+  import java.util.Calendar
+  import java.text.SimpleDateFormat
+
+ 
+  val curTimeFormat = new SimpleDateFormat("dd/MM/yyyy")
+
+  curTimeFormat.format(currDate)
+}
+@**********************************
+* Helper generating table headers *
+***********************************@
+@header(key:String, title:String) = {
+    <th class="@key.replace(".","_") header @if(currentSortBy == key) @{if(currentOrder == "asc") "headerSortDown" else "headerSortUp"}">
+        <a href="@link(0, key)">@title</a>
+    </th>
+}
+
+@main {
+   <div class="wrapper">
+     	<div class="container" >
+			<div class="row pageWidthDecreStyles">
+				<div class="col-md-6">
+	            	<div id="bc1" class="btn-group btn-breadcrumb">
+						<a href="@routes.Application.index()" class="btn btn-success homeButStyl"><i class="icon-home"></i></a>
+	    				<a href="@routes.Application.showOptions("SALES RECONCILIATION","ALL")" class="btn btn-default" id="homeButtonStyles">SALES RECONCILIATION</a>
+	    				<a href="#" class="btn btn-default" id="homeButtonStyles">@pageAction</a>
+					</div>
+      			</div>
+      			<div class="col-md-6">
+            		<span class="pull-right">
+           				 <div>
+           					<a href="@routes.Application.showOptions("SALES RECONCILIATION","ALL")" class="btn btn-default backButtonStyl"><i class="icon-arrow-left"></i>BACK</a>
+          				 </div>
+        			</span>
+        		</div>
+				<br><br> 
+				 @if(flash.containsKey("success")) {
+			       <div class="alert alert-warning shiftEditTableStyles shiftEditTableFonts" style="padding:5px;">
+					            <b style="font-size:12px">Done!</b>@flash.get("success")
+			        </div>
+			    } 
+				@if(flash.containsKey("DSRErr")) {
+			        <div class="alert alert-warning shiftEditTableStyles shiftEditTableFonts" style="padding:5px;">
+						Done!@flash.get("DSRErr")
+			        </div>
+				}
+				<div class="col-lg-12">
+				    <div id="actions">
+				        <form action="@link(0, "status")" method="GET">
+				        	<p class="pull-left" style="padding-top:-10px">
+				            <select name="f" id="searchbox" class="textBoxesStyles">
+				            	<option value="OPEN" @checkSelected("OPEN")>OPEN</option>
+				            	<option value="" @checkSelected("")>ALL</option>
+				            	<option value="SUBMITTED" @checkSelected("SUBMITTED")>SUBMITTED</option>
+				            </select>
+				            <input type="submit" id="searchsubmit" value="Filter by Status" class="btn btn-info" style="font-size: 10px;padding: 1px 7px 2px 4px;">
+				            </p>
+				        </form>
+				    </div>
+	    
+				    @if(currentPage.getTotalRowCount == 0) {
+				        
+				        <div class="well">
+				            <em>Nothing to display</em>
+				        </div>
+				        
+				    } else {
+	        
+			        <div class="table-responsive"> 
+			        	<table class="table table-hover  table-striped"  style="background-color: beige;">
+			            	<thead style="background-color: gainsboro;" id="shiftTableThStyles">
+			                	<tr>
+			                     	@header("todayDate", "Created Date")
+			                  
+			                    	@header("reportingBusinessDate", "Reporting Business Date")
+			                    
+			                      	@header("store.name", "Store Name")
+			                      
+			                        <th>Cash Reported</th>
+			                        
+			                         <th>Cheques Reported</th>
+			                         
+			                         <th>Total Sales Reported</th>
+			                      
+			                       @header("status", "Status")
+			                	</tr>
+			            	</thead>
+			            	<tbody id="shiftTableTbodyStyles">
+			
+				                @for(dsr <- currentPage.getList) {
+			                    <tr>
+			                        <td><a href="@routes.DailySalesReconciliations.edit(dsr.id,flash.get("pageAction"))">@currentDateFormat(dsr.todayDate)</a></td>
+			                        <td>
+			                            @if(dsr.reportingBusinessDate == null) {
+			                                <em>-</em>
+			                            } else {
+			                            	@currentDateFormat(dsr.reportingBusinessDate)
+			                            }
+			                        </td>
+			                         <td>
+			                            @if(store.name == null) {
+			                                <em>-</em>
+			                            } else {
+			                                @store.name  
+			                            }
+			                        </td>
+			                      
+			                         <td>
+			                            @if(dsr.cashInSafe  == null) {
+			                                <em>-</em>
+			                            } else {
+			                                @DailySalesReconciliation.getCashReported(dsr)  
+			                            }
+			                        </td>
+			                        <td>
+			                            @if(dsr.chequesInSafe  == null) {
+			                                <em>-</em>
+			                            } else {
+			                                 @DailySalesReconciliation.getChequesReported(dsr)  
+			                            }
+			                        </td>
+			                       	 	<td>
+										 @DailySalesReconciliation.getTotalSalesAmount(dsr)
+										</td>
+			                          <td>
+			                            @if(dsr.status == null) {
+			                                <em>-</em>
+			                            } else {
+			                                @dsr.status 
+			                            }
+			                        </td>
+			                    </tr>
+				            }
+				
+				          </tbody>
+				       </table>
+					</div>
+	
+			        <div id="pagination" class="pager">
+			            <ul>
+			                @if(currentPage.hasPrev) {
+			                    <li class="previous">
+			                        <a href="@link(currentPage.getPageIndex - 1, null)" id="padStyle">&larr; Previous</a>
+			                    </li>
+			                } else {
+			                    <li class="previous disabled">
+			                        <a id="padStyle">&larr; Previous</a>
+			                    </li>
+			                }
+			                <li class="current">
+			                    <a id="padStyle">Displaying @currentPage.getDisplayXtoYofZ(" to "," of ")</a>
+			                </li>
+			                @if(currentPage.hasNext) {
+			                    <li class="next">
+			                        <a href="@link(currentPage.getPageIndex + 1, null)" id="padStyle">Next &rarr;</a>
+			                    </li>
+			                } else {
+			                    <li class="next disabled">
+			                        <a id="padStyle">Next &rarr;</a>
+			                    </li>
+			                }
+			            </ul>
+			        </div>
+		    		}
+		    	</div>
+	        </div>
+	     </div>
+	    </div>
+}

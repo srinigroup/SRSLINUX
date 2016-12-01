@@ -1,0 +1,141 @@
+ @import helper._ 
+ @import helper.twitterBootstrap._
+
+ 
+ @main{
+ 	 <link type="text/css" href='https://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,400,600'  rel='stylesheet'>
+	
+	<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/ui-darkness/jquery-ui.min.css" rel="stylesheet">
+	
+  	
+   	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/reports.css")"> 
+   	
+   	<script type="text/javascript" src="@routes.Assets.at("javascripts/common.js")"></script>
+   		
+	<script type="text/javascript" src="@routes.Assets.at("fancybox/jquery.fancybox.pack.js?v=2.1.5")"></script> <!-- Fancybox js, need jquery advanced -->
+  	
+	<!-- To convert Table to Excel download in Reports page -->
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/tableToExcelExport/jquery.base64.js")"></script>
+	
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/tableToExcelExport/tableExport.js")"></script>
+  		 
+	<script type="text/javascript" src="//www.google.com/jsapi"></script>
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/reports.css")">
+	
+	<script type="text/javascript">
+		google.load('visualization', '1', {packages: ['columnchart','table']});
+	</script>
+ 
+	<div class="wrapper">
+     	<div class="container" >
+			 <div class="row">
+			 	
+            	<div class="span12" style="margin-left:80px !important">
+               		 <span>
+                    	<div id="bc1" class="btn-group btn-breadcrumb">
+       						<a href="@routes.Application.index()" class="btn btn-success homeButStyl"><i class="icon-home"></i></a>
+            					<a href="#" class="btn btn-default" id="homeButtonStyles">REPORTS</a>
+      					</div>
+        			</span>
+            		<span class="pull-right" style="padding-right:10%;">
+           				 <div>
+            					<a href="@routes.Application.index()" class="btn btn-default backButtonStyl"><i class="icon-arrow-left" style="font-size: 10px;"></i>BACK</a>
+          				 </div>
+        			</span>
+        		
+         		 <br><br>
+	
+	<form id="ajaxform" action="@routes.Reports.getReport()" method="POST" onreset="myFunction()">
+	<div class="panel panel-success  shiftEditTableFonts" style="height:160px;border-color:#000000;margin-top: 15px;width:90% !important;" >
+		<div class="panel-heading" style="background-color:#9fdf9f;height:45px;"><center> <h2 style="font-size: 18px;margin-top: -0px;color: #000;">Srini Group DashBoard</h2></center></div>
+	   		 <div class="panel-body" style="font-size: 11px;margin-top:-5px;">
+  	
+			  	<div class="table-responsive">
+			  		<table style="background-color: #dff0d8;border-color:#000000;" class="table table-bordered">
+			  			<tr>
+			  				<td><b id="shiftTableThStyles">Start Date :</b> <input type="text" name="reportStartDate" class="datepicker1 textBoxesStyles" style="position: relative; z-index: 10;"   readonly='readonly'/></td>
+			  				<td><b id="shiftTableThStyles">End Date : </b><input type="text" name="reportEndDate" class="datepicker1 textBoxesStyles" style="position: relative; z-index: 10;"  readonly='readonly'/> </td>
+			  				<td><b id="shiftTableThStyles">Store : </b><select name="reportStore" class="textBoxesStyles">
+			  					<option value="ALL">ALL</option>
+			  					@for(store <- Stores.getStoresList()){
+			  						<option value="@store.id">@store.name</option>
+			  					}
+			  				</select> </td>
+			  			</tr>
+			  			<tr>
+			  			<td><b id="shiftTableThStyles">Category&nbsp; : </b><select name="byType" id="byType" class="textBoxesStyles">
+			  					<option value="sales">Sales</option>
+			  					<option value="media">MediaTender</option>
+			  					<option value="invoices">Invoices</option>
+			  					<option value="ReconciliationReport">Reconciliation Report</option>
+			  				</select></td>
+							<td><b id="shiftTableThStyles">SortBy&nbsp;&nbsp;&nbsp; : </b><select name="sortBy" id="sortBy" class="textBoxesStyles">
+								<option value="DATE">DATE</option>
+			  					<option value="STORE">STORE</option>
+			  				</select> </td>
+			  				
+			  				<td><input type="submit" id="reportButton" class="btn btn-primary" name="reportButton" value="GetReport" style="font-size: 10px;padding: 5px 10px 5px 12px;"/>
+			  				<input type="reset" id="resetClear"class="btn btn-danger"  value="Reset" style="font-size: 10px;padding: 5px 10px 5px 12px;"/> </td>
+			  			</tr>
+				  		</table>
+				 </div>
+	  	</div>
+				  		<div id="sortByDiv" style="display:none">
+	  					<select  id="sortBySelectTagForSales" >
+						<option value="DATE" id="shiftTableThStyles">DATE</option>
+	  					<option value="STORE" id="shiftTableThStyles">STORE</option>
+	  					</select>
+	  					<select  id="sortBySelectTagForSupp">
+	  					<option value="DATE" id="shiftTableThStyles">DATE</option>
+	  					<option value="STORE" id="shiftTableThStyles">STORE</option>
+						<option value="SUPPLIER" id="shiftTableThStyles">SUPPLIER</option>
+	  					<option value="PAYTERMS" id="shiftTableThStyles">PAYTERMS</option>
+	  					</select>
+	  		</div>
+	 </div>
+     <br/>
+	
+	<div class="table-responsive" style="max-width: 100%;overflow-x: overlay;width:90% !important;">
+   	<table class="table table-bordered" style="background-color: white;border-color: #fff;"> 
+     <tr>
+     	<td>
+     		<div id="visualizationtable"></div> 
+     	</td>
+     </tr>
+     <tr>
+     	<td>
+     		<a href="#" class="pull-right" onclick="$('.google-visualization-table-table').tableExport({type:'excel',escape:'false'});" style="font-size:11px;"> <img src="@routes.Assets.at("javascripts/tableToExcelExport/icons/xls.png")" style="width:15px">Export</a>
+     		<div id="visualizationbar"> </div>
+     	</td>
+     </tr>
+     </table>
+     </div>
+	
+	<!-- BootsTrap Modal for Report Click Event -->
+	
+	<div class="modal fade shiftEditTableStyles" id="myModalReportClick" role="dialog" style="background-color: rgba(0, 0, 0,0.3);">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Modal Header</h4>
+        </div>
+        <div class="modal-body">
+          <p>Gopi</p>
+		  		<div id="chartpopUP"> // div for chart,Here our Chart Comes
+		  		</div>
+        </div>
+    </div>
+    <!-- BootsTrap Modal Ends -->
+    
+ 	</form>
+ 			</div>
+        	</div>
+		</div>
+	</div>
+
+}<!-- main end -->
+ 

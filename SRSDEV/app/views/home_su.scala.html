@@ -1,0 +1,60 @@
+ @main{
+ 
+ <style>
+.img-responsive {
+    width: 60px;
+}
+
+</style>           
+        <div class="wrapper">
+            <div class="container">
+                <div class="row">
+                    <div class="span12 accHomeStyle">
+                    
+                        <div class="content">
+                            <div class="btn-controls">
+                                <div class="btn-box-row row-fluid">
+                                	 <div class="col-sm-3 col-md-3 userTabInAccHome">
+									      <div class="panel panel-success panelTStyles">
+									        <div class="panel-heading panelstyles">REPORTS</div>
+                                				<div class="panel-body panelbodystyles">
+			                                		<a href="@routes.Reports.getReportHome()"><img src="@routes.Assets.at("images/tabImages/reports.png")" class="img-responsive center-block" alt="Image">
+			                                   		 </a>
+			                                   		 <p class="text-muted pTextInHomeStore"> Reports Generation</p>
+	                                     		</div>
+										      </div> 
+										   </div>
+										   <div class="col-sm-3 col-md-3 userTabInAccHome">
+									      <div class="panel panel-success panelTStyles">
+									        <div class="panel-heading panelstyles">INVOICE PAYMENT</div>
+                                				<div class="panel-body panelbodystyles">
+				                                  	  <a href="@routes.InvoiceInventory.showPaymentPage("noCompany","noStore","noCategory","noPaymentTerm")"><img src="@routes.Assets.at("images/tabImages/payment.png")" class="img-responsive center-block" alt="Image">
+				                                   	</a>  
+				                                   <p class="text-muted pTextInHomeStore">Payments Done Here</p>
+				                                   	
+	                                     		</div>
+										   </div> 
+										  </div>
+                                
+                                  
+                                    
+                            	</div>
+                        	</div>
+                        </div>  <!-- content -->
+       
+       				</div> <!-- span 12 -->
+        		</div> <!-- row -->
+      		</div> <!-- container -->
+     	</div> <!-- wrapper -->
+		 <div class="wrapper">
+            <div class="container">
+                <div class="row">
+			     	 <div class="footer">
+				          <hr/ style="width: 80%;margin-left: 10%;">   
+				            <div class="container">
+				               <p  class="pull-right" style="margin-left: 8%;"> <b class="copyright">&copy; 2014 SRINI Group &nbsp;</b>All rights reserved.</p>
+				            </div>
+					 </div> <!-- footer -->
+					 </div> <!-- row -->
+      		</div> <!-- container -->
+}

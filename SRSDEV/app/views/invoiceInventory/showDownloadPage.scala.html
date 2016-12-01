@@ -1,0 +1,177 @@
+@(invoiceList : List[Invoice], storeId:Long , invoiceType : String)
+@import helper._ 
+@import helper.twitterBootstrap._
+
+@checkSelected(id:Long)= @{
+	val result="selected"
+		if(storeId != null){
+			if(storeId == id){
+				result
+			}
+		}
+}
+
+@checkSelectedType(invoiceTYPE:String)= @{
+	val result="selected"
+		if(invoiceType != null){
+			if(invoiceTYPE.equals(invoiceType)){
+				result
+			}
+		}
+}
+
+@main{
+	<!-- Fancybox css -->
+	<link rel="stylesheet" href="@routes.Assets.at("fancybox/jquery.fancybox.css?v=2.1.5")" type="text/css" media="screen" /> <!-- Fancybox css -->
+	<script type="text/javascript" src="@routes.Assets.at("fancybox/jquery.fancybox.pack.js?v=2.1.5")"></script> <!-- Fancybox js, need jquery advanced -->
+	<!-- Fancybox css -->
+	<div class="wrapper">
+     	<div class="container" >
+			 <div class="row">
+            	<div class="span12 widthFor3TabStyles">
+               		 <span>
+                    	<div id="bc1" class="btn-group btn-breadcrumb">
+       						<a href="@routes.Application.index()" class="btn btn-success homeButStyl"><i class="icon-home"></i></a>
+            				<a href="#" class="btn btn-default" id="homeButtonStyles">INVOICE PROCESS</a>
+      					</div>
+        			</span>
+            		<span class="pull-right backButPositionStyle">
+           				 <div>
+           					<a href="@routes.Application.index()" class="btn btn-default backButtonStyl"><i class="icon-arrow-left"></i>BACK</a>
+          				 </div>
+        			</span>
+        		
+         		 <br><br>
+         		 
+         	@if(flash.containsKey("success")) {
+		         <div class="alert alert-warning shiftEditTableStyles shiftEditTableFonts" style="padding:5px;">
+		            <b style="font-size:12px">Done!</b> @flash.get("success")
+		        </div>
+		    } 
+	
+	@helper.form(action = routes.InvoiceInventory.getInvoices()) {
+	
+			<div class="table-responsive shiftTableStyles">
+  				<table style="background-color: white;border-color: #fff;" class="table table-bordered">
+  					<tr>
+					  	<td>
+            				<div class="clearfix" id="storeId_field">
+								<label for="storeId" style="font-size:11px;">Select Store</label>
+									<div class="input">
+										<select name="storeId" id="invoiceStoreList" required style="font-size:11px;">
+						            		<option class="blank" value="" id="pageTextFontSize">-- Choose a Store --</option>
+						  					@for(store <- Stores.getStoresList()){
+						  						<option value="@store.id" @checkSelected(store.id) id="pageTextFontSize">@store.name</option>
+						  					}
+						  				</select>
+									    <span class="help-inline"></span>
+									</div>
+							</div>
+					  	</td>
+					  	<td>
+            				<div class="clearfix" id="invoiceType_field">
+								<label for="invoiceType" style="font-size:11px;">InvoiceType</label>
+									<div class="input">
+										<select name="invoiceType" required style="font-size:11px;">
+						            		<option class="blank" value="">-- Choose a Invoice Type --</option>
+						  					<option value="CashPaid" @checkSelectedType("CashPaid")>CashPaid</option>
+						  					<option value="Others" @checkSelectedType("Others")>Others</option>
+						  					<option value="Statements" @checkSelectedType("Statements")>Statements</option>
+						  					<option value="Fuel" @checkSelectedType("Fuel")>Fuel</option>
+						  				</select> 
+									    <span class="help-inline"></span>
+									</div>
+							</div>
+					  	</td>
+            		</tr>
+            	</table>
+         	</div>
+		
+        <center><input type="submit" value="Get Invoices" class="btn btn-primary" style="margin-left: -25%;padding: 5px;font-size: 10px;"></center>
+        
+        
+	
+	} <!-- form ends -->
+		<div class="shiftTableStyles">
+			<a href="#" data-toggle="popover" title="Total Invoices : @Invoice.pendingInvoicesByAllStores()" data-content="<ul>@for(store <- Stores.getStoresList()){<li>@store.name : @Invoice.pendingInvoicesByStore(store.id)</li>}</ul>" data-placement="bottom" data-trigger="hover" class="pull-right btn btn-danger" style="padding: 5px;font-size: 10px;">Pending Invoices</a>
+		</div>
+		<br/>
+		<br/>
+		
+		
+		@if(invoiceList.size() == 0) {
+        
+        <div class="well shiftTableStyles" style="height:15px;padding: 2px 0px 25px 20px;font-size:11px;">
+            <em>Nothing to display</em>
+        </div>
+        
+	    } else {
+	        <div class="table-responsive shiftTableStyles shiftEditTableFonts">
+	        	<table class="table table-hover  table-striped"  style="background-color: beige;">
+	        		<thead style="background-color: gainsboro;">
+	                <tr>
+	                    <th>File Name</th>
+	                    
+	                    <th>Uploaded Date</th>
+	                    
+	                    <th>InvoiceType</th>
+	                    
+	                    <th>Store</th>
+	                    
+	                </tr>
+	            </thead>
+	            <tbody>
+	
+	                @for(invoice <- invoiceList) {
+	                    <tr>
+	                    	@if(invoice.storeId != 1){
+	                    		@*<td><a href="/INVOICEPROCESSINGSYSTEM/@invoice.filePath" class="fancyboxPDF" title="@invoice.fileName" onclick="OpenFancyBox('@invoice.id');">@invoice.fileName</a></td>*@
+	                    		<td><a href="@routes.Application.checkUrl(invoice.filePath)" class="fancyboxPDF" title="@invoice.fileName" onclick="OpenFancyBox('@invoice.id');">@invoice.fileName</a></td>
+	                    	}
+	                    	@if(invoice.storeId == 1){
+	                    		@*<td><a href="/INVOICEPROCESSINGSYSTEM/@invoice.filePath" class="fancyboxPDF" title="@invoice.fileName" onclick="OpenFancyBoxForHeadOffice('@invoice.id');">@invoice.fileName</a></td>*@
+	                    		<td><a href="@routes.Application.checkUrl(invoice.filePath)" class="fancyboxPDF" title="@invoice.fileName" onclick="OpenFancyBoxForHeadOffice('@invoice.id');">@invoice.fileName</a></td>
+	                    	}
+	                        
+	                        <td>@invoice.uploadedDate</td>
+	                        <td>@invoice.invoiceType</td>
+	                        <td>@Store.find.byId(invoice.storeId)</td>
+	                    </tr>
+	                }
+	
+	            </tbody>
+	         </table>
+	       </div>
+	        
+	    }
+		
+		
+							<!-- supplier list for Invoice Inventory ,while Processing Invoice-->
+    							
+    							<div id="supplierListByStoreForInvoiceDiv" style="display:none">
+                       
+									<select id="supplierListByStoreForInvoice" name="supplierlistByStoreForInvoice" >
+										<option class="blank" value="">-- Choose a Supplier --</option>
+					  					@for(supplierMapping <- Store.find.byId(storeId).supplierMapping){
+						  						<option value="@supplierMapping.supplier.id">@supplierMapping.supplier.name</option>
+						  					}
+		                            </select> 
+                          		</div>  
+                          		
+                          	<!-- company list for Invoice Inventory ,while Processing Invoice-->
+    							
+    							<div id="companyListForInvoiceDiv" style="display:none">
+                       
+									<select id="companyListForInvoice" name="companyListForInvoice" >
+										<option class="blank" value="">-- Choose a Company --</option>
+					  					@for(company <- Company.find.where().eq("status", "ACTIVE").orderBy("name").findList() ){
+						  						<option value="@company.id">@company.name</option>
+						  					}
+		                            </select> 
+                          		</div>
+				</div>
+        	</div>
+		</div>
+	</div>
+	
+} <!-- main ends -->

@@ -1,0 +1,187 @@
+@(timesheetForm:Form[Timesheet],store:Store,emp:Employee)
+ @import helper._ 
+ @import helper.twitterBootstrap._
+    
+
+ @main{
+
+	<div class="wrapper">
+     	<div class="container" >
+			 <div class="row">
+            	<div class="span12 widthFor3TabStyles">
+               		 <span>
+                    	<div id="bc1" class="btn-group btn-breadcrumb">
+       						<a href="@routes.Application.index()" class="btn btn-success homeButStyl"><i class="icon-home"></i></a>
+            				<a href="@routes.Application.showOptions("EMP TIMESHEET","ALL")" class="btn btn-default" id="homeButtonStyles">EMP TIMESHEET</a>
+            				<a href="#" class="btn btn-default" id="homeButtonStyles">ADD</a>
+      					</div>
+        			</span>
+            		<span class="pull-right backButPositionStyle">
+           				 <div>
+           					<a href="@routes.Application.showOptions("EMP TIMESHEET","ALL")" class="btn btn-default backButtonStyl"><i class="icon-arrow-left"></i>BACK</a>
+          				 </div>
+        			</span>
+        		
+         	<br><br>
+         	
+         	@if(flash.containsKey("success")) {
+       		<div class="alert alert-warning shiftEditTableStyles shiftEditTableFonts" style="padding:5px;">
+			 	<b style="font-size:12px;">Done!</b>@flash.get("success")
+        	</div>
+    		}
+	
+  
+  	@helper.form(action = routes.Timesheets.saveForsk(store.id), 'id -> "timesheetForm", 'onsubmit -> "return checkTimesheetExists();") {
+		
+
+		<h3  style="font-size:18px;color:#fff;">Time Sheet </h3>
+		<hr/  class="shiftEditTableStyles">
+		
+          			<div class="table-responsive"> 
+        				<table class="table table-bordered shiftEditTableStyles shiftEditTableFonts" style="background-color: #DFF0D8;border-color: #fff;">
+        					<tr>
+								<td> 
+									<div class="clearfix  " id="empName_field">
+									    <label for="empName" id="pageTextFontSize">Employee</label>
+									    	<div class="input">
+									        
+									    		<input type="text" value="@emp.firstName.@emp.lastName" id="pageTextFontSize" readonly='readonly'/> 
+									
+									        <span class="help-inline"></span>
+									    </div>
+									</div>
+								
+								 	<input type="hidden" name="empid" id="empid" value="@emp.id"  readonly='readonly' id="pageTextFontSize"/>
+								</td>
+								<td>
+									<div class="clearfix  " id="date_field">
+		    							<label for="date" id="pageTextFontSize">Start Date</label>
+		    								<div class="input">
+		        
+		    									<input type="text" id="timesheetStartDate" name="date" class="startDatePicker textBoxesStyles" required />
+		
+		        
+		    								</div>
+									</div>
+								</td>
+								<td>
+								<div class="clearfix  " id="endDate_field">
+	    							<label for="endDate" id="pageTextFontSize">End Date</label>
+	    								<div class="input">
+	        
+	    									<input type="text" id="timesheetEndDate" name="endDate" class="endDatePicker textBoxesStyles" required />
+	
+	    								</div>
+									</div>
+								</td>
+								<td>
+									 <input type="checkbox" name="applyLeave" id="applyLeaveCheckBox" /> Leave
+									 
+									<div class="clearfix" id="leaveType_field" style="display:none;">
+    									<label for="leaveType" id="pageTextFontSize">Leave Type</label>
+    										<div class="input">
+    											<select id="leaveType" name="leaveType" id="pageTextFontSize">
+    												 <option class="blank" value="None">-- Choose Type --</option>
+										             <option value="AL" >AL</option>
+							                         <option value="SL" >SL</option>
+							                         <option value="PH" >PH</option>
+							                    </select> 
+    										</div>
+									</div>
+								
+								</td>
+								
+									<input type="hidden" name="firmid" value="@store.id"/>
+								
+							</tr>
+							<tr>
+								
+								<td>
+									<div class="clearfix  " id="timesheetStartTime_field">
+    									<label for="timesheetStartTime" id="pageTextFontSize">Start Time</label>
+    										<div class="input">
+    											<select id="startTimeHour" name="startTimeHour" required onblur="durationFromStartEnd()" id="pageTextFontSize">
+    												 <option class="blank" value="">-- Hour --</option>
+										             @for(i <- 0 to 9) {
+    													<option value="0@i" >0@i</option>
+													 }
+													  @for(i <- 10 to 23) {
+    													<option value="@i" >@i</option>
+													 }
+							                    </select>
+							                    <select id="startTimeMins" name="startTimeMins" required onblur="durationFromStartEnd()" id="pageTextFontSize">
+    												 <option class="blank" value="">-- Min's --</option>
+										             <option value="00" >00</option>
+							                         <option value="15" >15</option>
+							                         <option value="30" >30</option>
+							                         <option value="45" >45</option>
+							                    </select> 
+    										</div>
+									</div>
+								</td>
+								
+								<td>
+									<div class="clearfix  " id="timesheetEndTime_field">
+    									<label for="timesheetEndTime" id="pageTextFontSize">End Time</label>
+    										<div class="input">
+    											<select id="endTimeHour" name="endTimeHour" required onblur="durationFromStartEnd()" id="pageTextFontSize">
+    												 <option class="blank" value="">-- Hour --</option>
+    												 @for(i <- 0 to 9) {
+    													<option value="0@i" >0@i</option>
+													 }
+													  @for(i <- 10 to 23) {
+    													<option value="@i" >@i</option>
+													 }
+    												
+							                    </select>
+							                    <select id="endTimeMins" name="endTimeMins" required onblur="durationFromStartEnd()" id="pageTextFontSize">
+    												 <option class="blank" value="">-- Min's --</option>
+										             <option value="00" >00</option>
+							                         <option value="15" >15</option>
+							                         <option value="30" >30</option>
+							                         <option value="45" >45</option>
+							                    </select> 
+    										</div>
+									</div>
+								</td>
+								
+								<td id="pageTextFontSize"s>
+									@helper.inputText(timesheetForm("duration"), '_label -> "Duration", 'class -> "textBoxesStyles", 'readonly -> "readonly")
+								</td>
+								
+								<td id="pageTextFontSize">
+									
+									@select(
+				  				 timesheetForm("status"),
+				  				 options(Seq("OPEN","SUBMITTED")),
+				 				 '_label -> "Status", 'required -> "true", '_default -> "-- Select Status --"
+								)</td>
+								
+							</tr>
+							
+						</table>
+					</div>
+            
+      	
+      	<!-- bottom div ,for submit and cancel button's -->
+        <div style="height:50px; margin-right:50px;  margin-top:10px;"   class="shiftEditTableStyles">
+        	<div>
+            	<p style="text-align: right; /"><input type="submit" class="btn btn-large btn-success" style="padding-right:30px; padding-left:30px; text-align:center;font-size:12px;">&nbsp;&nbsp;  
+				
+		    </div>
+        </div>
+        
+    
+    
+
+
+	}<!-- form end -->
+		</div>
+       </div>
+	</div>
+	</div>
+
+}<!-- main end -->
+
+ 
+   

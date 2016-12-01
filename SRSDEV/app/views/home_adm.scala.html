@@ -1,0 +1,180 @@
+ @main{
+<style>
+	
+	.img-responsive {
+    width: 60px;
+}
+</style>
+        <div class="wrapper">
+            <div class="container">
+                <div class="row">
+                    <div class="span12 accHomeStyle">
+                    
+                    
+                        <div class="content">
+                            <div class="btn-controls">
+                                <div class="btn-box-row row-fluid">
+                                	 <div class="col-md-3  col-md-offset-1 userTabInAccHome"  style="margin-left:0px;">
+									      <div class="panel panel-success panelTStyles" style="height:150px;" >
+									        <div class="panel-heading panelstyles" style="word-break:break-all;">RECONCILATION</div>
+                                				<div class="panel-body panelbodystyles">
+			                                		<a href="@routes.DailyReconciliations.drViewOptions(0,"reportingBusinessDate","desc","SUBMITTED","VIEW")"><img src="@routes.Assets.at("images/tabImages/mrep.png")" class="img-responsive center-block" alt="Image" style="width:53px;">
+				                                     </a>
+				                                      <p class="text-muted pTextInHomeStore">
+                                           				 Monitor Reconciliation</p>
+	                                     		</div>
+										      </div> 
+										   </div>
+										   <div class=" col-md-3  col-md-offset-1 userTabInAccHome" style="margin-left:0px;">
+									      	<div class="panel panel-success panelTStyles" style="height:150px;">
+									        	<div class="panel-heading panelstyles">REPORTS</div>
+                                					<div class="panel-body panelbodystyles">
+										 
+				                                      <a href="@routes.Reports.getReportHome()" ><img src="@routes.Assets.at("images/tabImages/rep.png")" class="img-responsive center-block"  alt="Image">
+				                                    </a>
+				                                    <p class="text-muted pTextInHomeStore">
+                                            			Reports Generation</p>
+				                                    </div>
+										      </div> 
+										   </div>
+	                                     <div class="col-md-3 col-md-offset-1 userTabInAccHome" style="margin-left:0px;">
+									      <div class="panel panel-success panelTStyles" style="height:150px;">
+									        <div class="panel-heading panelstyles">SUPPLIER</div>
+                                				<div class="panel-body panelbodystyles">
+				                                    <a href="@routes.Application.showOptions("SUPPLIER","ALL")" ><img src="@routes.Assets.at("images/tabImages/supp.png")" class="img-responsive center-block" alt="Image">
+				                                    </a>
+				                                     <p class="text-muted pTextInHomeStore">
+				                                            Supplier</p>
+	                                     		</div>
+										   </div> 
+										  </div>
+	                                    <div class="col-md-3  col-md-offset-1 userTabInAccHome" style="margin-left:0px;">
+									      <div class="panel panel-success panelTStyles" style="height:150px;">
+									        <div class="panel-heading panelstyles">TIMESHEET</div>
+                                				<div class="panel-body panelbodystyles">
+				                                     <a href="@routes.Timesheets.showSelectPage()"><img src="@routes.Assets.at("images/tabImages/timesheet.png")" class="img-responsive center-block" alt="Responsive image" style="width:45px;">
+				                                    </a>
+				                                    <p class="text-muted pTextInHomeStore">
+                                            			Timesheet Processing</p>
+	                                     		</div>
+										   </div> 
+										  </div>
+                                    
+                            	</div>
+                        	</div>
+                        </div>  <!-- content -->
+                                 
+                       
+                 	  <div class="content">
+                            <div class="btn-controls">
+                                <div class="btn-box-row row-fluid">
+                                	 <div class="col-md-3  col-md-offset-1 userTabInAccHome" style="margin-left:0px;">
+									      <div class="panel panel-success panelTStyles" style="height:150px;" >
+									        <div class="panel-heading panelstyles">INVOICE INVENTORY</div>
+                                				<div class="panel-body panelbodystyles">
+			                                		 <a href="@routes.InvoiceInventory.showDownloadPage()"><img src="@routes.Assets.at("images/tabImages/invoicedownload.png")" class="img-responsive center-block" alt="Image">
+				                                     </a>
+				                                      <p class="text-muted pTextInHomeStore">
+                                           				Invoice Processing </p>
+	                                     		</div>
+										      </div> 
+										   </div>
+										   <div class=" col-md-3  col-md-offset-1 userTabInAccHome" style="margin-left:0px;">
+									      	<div class="panel panel-success panelTStyles" style="height:150px;">
+									        	<div class="panel-heading panelstyles">INVOICE UPLOAD</div>
+                                					<div class="panel-body panelbodystyles">
+										 
+				                                      <a href="@routes.InvoiceInventory.showUploadPageForHeadOffice()"><img src="@routes.Assets.at("images/tabImages/upload1.png")" class="img-responsive center-block"  alt="Image">
+				                                    </a>
+				                                    <p class="text-muted pTextInHomeStore">
+                                            			By Head Office</p>
+				                                    </div>
+										      </div> 
+										   </div>
+	                                     <div class="col-md-3 col-md-offset-1 userTabInAccHome" style="margin-left:0px;">
+									      <div class="panel panel-success panelTStyles" style="height:150px;">
+									        <div class="panel-heading panelstyles">INVOICE PAYMENT</div>
+                                				<div class="panel-body panelbodystyles">
+				                                     <a href="@routes.InvoiceInventory.showPaymentPage("noCompany","noStore","noCategory","noPaymentTerm")"><img src="@routes.Assets.at("images/tabImages/payment.png")" class="img-responsive center-block" alt="Image">
+				                                    </a>
+				                                    <p class="text-muted pTextInHomeStore">
+				                                            Payments Done Here</p>
+	                                     		</div>
+										   </div> 
+										  </div>
+	                                    <div class="col-md-3  col-md-offset-1 userTabInAccHome" style="margin-left:0px;">
+									      <div class="panel panel-success panelTStyles" style="height:150px;">
+									        <div class="panel-heading panelstyles">STAFF</div>
+                                				<div class="panel-body panelbodystyles">
+				                                     <a href="@routes.Application.showOptions("STAFF","ALL")"><img src="@routes.Assets.at("images/tabImages/staff.png")" class="img-responsive center-block" alt="Responsive image">
+				                                    </a>
+				                                    <p class="text-muted pTextInHomeStore">
+                                            			 Manage Employee's</p>
+	                                     		</div>
+										   </div> 
+										  </div>
+                                    
+                                   
+                                </div>
+                           </div>
+                       </div> <!-- content -->
+                        <div class="content">
+                            <div class="btn-controls">
+                                <div class="btn-box-row row-fluid">
+                                	 <div class="col-md-3  col-md-offset-1 userTabInAccHome" style="margin-left:0px;">
+									      <div class="panel panel-success panelTStyles" style="height:150px;" >
+									        <div class="panel-heading panelstyles">STORE</div>
+                                				<div class="panel-body panelbodystyles">
+			                                		 <a href="@routes.Application.showOptions("STORE","ALL")"><img src="@routes.Assets.at("images/tabImages/storecart.png")" class="img-responsive center-block" alt="Image">
+				                                     </a>
+				                                      <p class="text-muted pTextInHomeStore">
+                                           				 Manage Stores</p>
+	                                     		</div>
+										      </div> 
+										   </div>
+										   <div class=" col-md-3  col-md-offset-1 userTabInAccHome" style="margin-left:0px;">
+									      	<div class="panel panel-success panelTStyles" style="height:150px;">
+									        	<div class="panel-heading panelstyles">HO TIMESHEET</div>
+                                					<div class="panel-body panelbodystyles">
+										 
+				                                      <a href="@routes.Timesheets.showSelectPageForHeadOfficeTimeSheet()"><img src="@routes.Assets.at("images/tabImages/timesheet.png")" class="img-responsive center-block"  alt="Image">
+				                                    </a>
+				                                    <p class="text-muted pTextInHomeStore">
+                                            			Timesheet Processing</p>
+				                                    </div>
+										      </div> 
+										   </div>
+	                                    
+	                                    <div class="col-md-3  col-md-offset-1 userTabInAccHome" style="margin-left:0px;">
+									      <div class="panel panel-success panelTStyles" style="height:150px;">
+									        <div class="panel-heading panelstyles">HO FORMS</div>
+                                				<div class="panel-body panelbodystyles">
+				                                     <a href="@routes.HoForms.showHoFormUploadPage()"><img src="@routes.Assets.at("images/tabImages/mreports1.png")" class="img-responsive center-block" alt="Responsive image" style="width:65px;">
+				                                    </a>
+				                                     <p class="text-muted pTextInHomeStore">
+                                            			  Upload Head Office Forms</p>
+	                                     		</div>
+										   </div> 
+										  </div>
+                            	</div>
+                        	</div>
+                        </div>  <!-- content -->
+                  
+       				</div> <!-- span 12 -->
+        		</div> <!-- row -->
+      		</div> <!-- container -->
+     	</div> <!-- wrapper -->
+		 <div class="wrapper">
+            <div class="container">
+                <div class="row">
+			     	 <div class="footer">
+							          <hr/>   
+							            <div class="container">
+							               <p  class="pull-right footerStyle"> <b class="copyright">&copy; 2016 SRINI Group &nbsp;</b>All rights reserved.</p>
+							            </div>
+					 </div> <!-- footer -->
+					 </div> <!-- row -->
+      		</div> <!-- container -->
+     	</div> <!-- wrapper -->
+}
+

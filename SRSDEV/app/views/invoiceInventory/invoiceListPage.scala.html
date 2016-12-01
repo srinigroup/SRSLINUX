@@ -1,0 +1,120 @@
+@(invoiceList : List[Invoice], storeId:Long)
+
+@currentDateFormat(currDate:Date) = @{
+  import java.util.Calendar
+  import java.text.SimpleDateFormat
+
+ 
+  val curTimeFormat = new SimpleDateFormat("dd/MM/yyyy")
+
+  curTimeFormat.format(currDate)
+}
+
+@main {
+  <!-- Fancybox css -->
+	<link rel="stylesheet" href="@routes.Assets.at("fancybox/jquery.fancybox.css?v=2.1.5")" type="text/css" media="screen" /> <!-- Fancybox css -->
+	<script type="text/javascript" src="@routes.Assets.at("fancybox/jquery.fancybox.pack.js?v=2.1.5")"></script> <!-- Fancybox js, need jquery advanced -->
+	<!-- Fancybox css -->  
+  <div class="wrapper">
+     	<div class="container" >
+			 <div class="row">
+            	<div class="span12">
+               		 <span>
+                    	<div id="bc1" class="btn-group btn-breadcrumb">
+       						<a href="@routes.Application.index()" class="btn btn-success"><i class="icon-home"></i></a>
+            				<a href="@routes.InvoiceInventory.showDownloadPage()" class="btn btn-default">INVOICE</a>
+            				<a href="#" class="btn btn-default">LIST</a>
+      					</div>
+        			</span>
+            		<span class="pull-right" style="padding-right:50px;">
+           				 <div>
+           					<a href="@routes.InvoiceInventory.showDownloadPage()" class="btn btn-default"><i class="icon-arrow-left"></i>BACK</a>
+          				 </div>
+        			</span>
+        		</div>
+        	</div>
+         		 <br><br>
+  
+  
+
+    @if(flash.containsKey("success")) {
+        <div class="alert alert-warning shiftEditTableStyles shiftEditTableFonts" style="padding:5px;">
+		            <b style="font-size:12px">Done!</b>@flash.get("success")
+        </div>
+    } 
+
+    
+    @if(invoiceList.size() == 0) {
+        
+        <div class="well">
+            <em>Nothing to display</em>
+        </div>
+        
+    } else {
+        <div class="table-responsive">
+        	<table class="table table-hover  table-striped"  style="background-color: beige;">
+        		<thead style="background-color: gainsboro;">
+                <tr>
+                    <th>File Name</th>
+                    
+                    <th>Uploaded Date</th>
+                    
+                    <th>InvoiceType</th>
+                    
+                    <th>Store</th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+
+                @for(invoice <- invoiceList) {
+                    <tr>
+                    	@if(invoice.storeId != 1){
+                    		@*<td><a href="/INVOICEPROCESSINGSYSTEM/@invoice.filePath" class="fancyboxPDF" title="@invoice.fileName" onclick="OpenFancyBox('@invoice.id');">@invoice.fileName</a></td>*@
+                    		<td><a href="@routes.Application.checkUrl(invoice.filePath)" class="fancyboxPDF" title="@invoice.fileName" onclick="OpenFancyBox('@invoice.id');">@invoice.fileName</a></td>
+                    	}
+                    	@if(invoice.storeId == 1){
+                    		@*<td><a href="/INVOICEPROCESSINGSYSTEM/@invoice.filePath" class="fancyboxPDF" title="@invoice.fileName" onclick="OpenFancyBoxForHeadOffice('@invoice.id');">@invoice.fileName</a></td>*@
+                    	<td><a href="@routes.Application.checkUrl(invoice.filePath)" class="fancyboxPDF" title="@invoice.fileName" onclick="OpenFancyBoxForHeadOffice('@invoice.id');">@invoice.fileName</a></td>
+                    	}
+                        
+                        <td>@invoice.uploadedDate</td>
+                        <td>@invoice.invoiceType</td>
+                        <td>@Store.find.byId(invoice.storeId)</td>
+                    </tr>
+                }
+
+            </tbody>
+         </table>
+       </div>
+        
+    }
+    						<!-- supplier list for Invoice Inventory ,while Processing Invoice-->
+    							
+    							<div id="supplierListByStoreForInvoiceDiv" style="display:none">
+                       
+									<select id="supplierListByStoreForInvoice" name="supplierlistByStoreForInvoice" >
+										<option class="blank" value="">-- Choose a Supplier --</option>
+					  					@for(supplierMapping <- Store.find.byId(storeId).supplierMapping){
+						  						<option value="@supplierMapping.supplier.id">@supplierMapping.supplier.name</option>
+						  					}
+		                            </select> 
+                          		</div>  
+                          		
+                          	<!-- company list for Invoice Inventory ,while Processing Invoice-->
+    							
+    							<div id="companyListForInvoiceDiv" style="display:none">
+                       
+									<select id="companyListForInvoice" name="companyListForInvoice" >
+										<option class="blank" value="">-- Choose a Company --</option>
+					  					@for(company <- Company.all() ){
+						  						<option value="@company.id">@company.name</option>
+						  					}
+		                            </select> 
+                          		</div>
+     </div>
+    </div>
+   				
+}
+
+            

@@ -1,0 +1,215 @@
+@(empList : List[Employee],totalSubTimesheetList :List[Timesheet],weekStartDate :String)
+@import helper._ 
+@import helper.twitterBootstrap._
+@import java.math.BigInteger; var i=0
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script> 
+	    <link href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/ui-darkness/jquery-ui.min.css" rel="stylesheet">
+ @currentDateFormat(currDate:Date) = @{
+  import java.util.Calendar
+  import java.text.SimpleDateFormat
+
+ 
+  val curTimeFormat = new SimpleDateFormat("dd/MM/yyyy")
+
+  curTimeFormat.format(currDate)
+}
+ 
+ 
+  <style>
+    .datepicker{
+     
+    }
+  </style>
+  
+ <script>
+
+ 
+	 
+	function enableThursday(date) {
+
+		  var day = date.getDay();
+		 // If day == 1 then it is MOnday
+		 if (day == 4) {
+		 
+		 return [true] ; 
+		 
+		 } else { 
+		 
+		 return [false] ;
+		 }
+  
+	}
+	
+	 $(function() {
+		 $( ".datepicker" ).datepicker({
+		  maxDate: new Date(),
+		 beforeShowDay: enableThursday,dateFormat: "dd/mm/yy",
+		  beforeShow: function(){    
+        	 $(".ui-datepicker").css('font-size', 12) 
+   		},
+		 });
+	 });
+</script>
+@**********************************
+* Helper generating table headers *
+***********************************@
+@header(key:String, title:String) = {
+    
+}
+@main {
+
+  <div class="wrapper">
+     	<div class="container" >
+			 <div class="row">
+            	<div class="span12 widthFor3TabStyles">
+               		 <span>
+                    	<div id="bc1" class="btn-group btn-breadcrumb">
+       						<a href="@routes.Application.index()" class="btn btn-success homeButStyl"><i class="icon-home"></i></a>
+            				<a href="#" class="btn btn-default" id="homeButtonStyles">HO TIMESHEET VERIFY</a>
+      					</div>
+        			</span>
+            		<span class="pull-right backButPositionStyle">
+           				 <div>
+           					<a href="@routes.Application.index()" class="btn btn-default backButtonStyl" ><i class="icon-arrow-left"></i>BACK</a>
+          				 </div>
+        			</span>
+        		
+         		 <br><br>
+         		 
+         	@if(flash.containsKey("success")) {
+		        <div class="alert alert-warning shiftEditTableStyles shiftEditTableFonts" style="padding:5px;">
+			 		<b style="font-size:12px;">Done!</b> @flash.get("success")
+		        </div>
+		    } 
+		    
+	@helper.form(action = routes.Timesheets.getAllHeadOfficeTimesheetsToVerify()) {
+			<div class="clearfix" id="timesheetStartDate_field">
+				<label for="timesheetStartDate" style="font-size:12px;color:#fff;">Select WeekStartDate: </label>
+						@if(weekStartDate.equals("no_date")){
+							<input type="text" name="timesheetStartDate" class="datepicker textBoxesStyles" required  />
+						}
+						@if(!(weekStartDate.equals("no_date"))){
+							<input type="text" name="timesheetStartDate" class="datepicker textBoxesStyles" required value="@weekStartDate" />
+					    }
+					    <span class="help-inline"></span>
+				
+					<input type="submit" class="btn btn-primary" value="GetList" style="font-size: 10px;padding: font-size: 10px;padding: 3px 10px 3px 10px;">
+					
+			</div>
+	}			
+	@if((!(weekStartDate.trim.equals("no_date"))) && empList.size == 0){
+		<br/>
+		<div class="alert alert-warning shiftEditTableStyles shiftEditTableFonts" style="padding:5px;">
+			<b style="font-size:12px;">No Employees found for approval</b>
+		</div>
+	}
+	
+	
+		@if(!(weekStartDate.trim.equals("no_date") || empList.size == 0)){
+			<br/>
+			@helper.form(action = routes.Timesheets.updateWeeklyHOTimesheetsByWeekDate(weekStartDate)) {
+			
+			<div class="table-responsive shiftEditTableStyles">			
+        	<table class="table table-hover  table-striped"  style="background-color: beige;font-size:12px;">
+        		<thead style="background-color: gainsboro;">
+                <tr>
+                	<th>Employee Name</th>
+                	<th>WeekStartDate</th>
+                	<th>WeekEndDate</th>
+                	<th>TotalDuration</th>
+                	<th>Details</th>
+                	<th>Approve</th>
+                </tr>
+            </thead>
+			<tbody>
+			
+			<input type="hidden" name="empListSize" id="empListSize" value="@empList.size()"> 
+    		@for(empName <- empList) {
+	    		<tr>
+	    			
+	    			<input type="hidden" name="empId_@i" id="empId_@i" value="@empName.id">
+	    			@(i+=1)
+					<td>@empName.firstName</td>		
+					<td>@weekStartDate</td>
+					<td>@currentDateFormat(Application.getNextDate(weekStartDate, 6))</td>
+					<td>@Timesheet.getTotalHOTimesheetHours(empName.id,Application.getDate(weekStartDate))</td>
+					<td>
+						<a href="javascript:showMethodForGetHeadOfficeTimesheetsForVerify('@empName.id','@weekStartDate')">
+							<img src="@routes.Assets.at("images/tabImages/a..png")" class="img-responsive center-block"  alt="Image" style="width:80px;margin-left:-5px;height:35px;">
+						</a>
+					</td>
+					<td>
+						<a href="javascript:showApproveModalInListPage('@weekStartDate','@Application.getDateString(Application.getNextDate(weekStartDate, 6))','@empName.id')">
+							<img src="@routes.Assets.at("images/tabImages/v..png")" class="img-responsive center-block"  alt="Image" style="width:80px;margin-left:-5px;height:35px;">
+						</a>
+					</td>
+				</tr>
+			}		
+
+            </tbody>
+         </table>
+       </div>
+       <div class="pull-right backButPositionStyle">
+       		<input type="button" value="Approve All" class="btn btn-primary pull-right" style="font-size: 11px;text-align:center;" onclick="showAlertForApproveAllInListPage(this)">
+       	</div>
+       }    
+    }    
+	
+		</div>
+	</div>
+		<!-- Modal For Approve-->
+  <div class="modal fade" id="approveModelInListPage" role="dialog" style="margin-top:80px;">
+    <div class="modal-dialog dialogWidthStyle">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header" style="background-color: #e7e7e7;">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <form action="@routes.Timesheets.verifyHOTimesheet()">
+        	<input type="hidden" id="stDateForVerifyHOTimesheet" name="stDateForVerifyHOTimesheet">
+        	<input type="hidden" id="enDateForVerifyHOTimesheet" name="enDateForVerifyHOTimesheet">
+        	<input type="hidden" id="empIdForVerifyHOTimesheet" name="empIdForVerifyHOTimesheet">
+	        <div class="modal-body" style="background: url(/assets/images/bg.png) #5CCAEA;margin-bottom:-20px;height: 100px">
+	          <p id="modelBodyPForApproveInListPage" style="font-size:17px;text-align:center;
+	          	margin: 20px 0px 0px 0px;word-wrap: break-word;">Are you sure do you want to Approve?</p>
+	        </div>
+	        <div class="modal-footer" style="background-color: #e7e7e7;text-align:center;padding: 19px 20px 15px;">
+	          <button type="submit" class="btn btn-success"  style="font-size: 13px;padding: 3px 10px 3px 10px;">Yes</button>
+	          <button type="button" class="btn btn-danger" data-dismiss="modal" style="font-size: 13px;padding: 3px 10px 3px 10px;">No</button>
+	        </div>
+	     </form>
+      </div>
+      
+    </div>
+  </div>
+  	<!-- Modal For ApproveAll-->
+  <div class="modal fade" id="approveAllModelInListPage" role="dialog" style="margin-top:80px;">
+    <div class="modal-dialog dialogWidthStyle">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header" style="background-color: #e7e7e7;">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body" style="background: url(/assets/images/bg.png) #5CCAEA;margin-bottom:-20px;height: 100px;padding: 19px 20px 15px;">
+          <p id="modelBodyPForApproveInListPage" style="font-size:17px;text-align:center;
+          	margin: 20px 0px 0px 0px;word-wrap: break-word;">Are you sure do you want to Approve all?</p>
+        </div>
+        <div class="modal-footer" style="background-color: #e7e7e7;text-align:center;">
+          <button type="button" class="btn btn-success"  style="font-size: 13px;padding: 3px 10px 3px 10px;" onclick="subApproveAllFormInListPage()">Yes</button>
+          <button type="button" class="btn btn-danger" data-dismiss="modal" style="font-size: 13px;padding: 3px 10px 3px 10px;">No</button>
+        </div>
+      </div>
+      	</div>
+       </div>
+    </div>
+  </div>
+  
+  <form action="@routes.Timesheets.getHeadOfficeTimesheetsForVerify()" id="subFormForGetHeadOfficeTimesheetsForVerifyMethod">
+  
+  	<input type="hidden" id="stDateForGetHeadOfficeTimesheetsForVerifyMethod" name="stDateForGetHeadOfficeTimesheetsForVerifyMethod">
+    <input type="hidden" id="empIdForGetHeadOfficeTimesheetsForVerifyMethod" name="empIdForGetHeadOfficeTimesheetsForVerifyMethod">
+  </form>
+} <!-- main ends -->

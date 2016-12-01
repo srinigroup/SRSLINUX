@@ -1,0 +1,213 @@
+@(timesheetForm:Form[Timesheet],store:Store)
+ @import helper._ 
+ @import helper.twitterBootstrap._
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script> 
+	    
+	    <link href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/ui-darkness/jquery-ui.min.css" rel="stylesheet">
+ 
+</script>
+<script>
+ $(function() {
+       var date=new Date();
+  date.setDate(date.getDate() + 1);
+  
+	$( "#startDatePicker" ).datepicker({  @*to disable future dates of startDatePicker*@
+    maxDate: new Date(),
+    beforeShow: function(){    
+         $(".ui-datepicker").css('font-size', 12) 
+   	},
+    onSelect: function(){   @*to hold the value of startDatePicker in endDatePicker*@
+    var selected = $(this).val();
+    $("#endstartDatePicker").val(selected)
+    }
+    ,dateFormat: "dd/mm/yy"});
+    
+	$( "#endstartDatePicker" ).datepicker({  @*to disable future dates of endDatePicker*@
+    maxDate: date,
+     dateFormat: "dd/mm/yy",
+	     beforeShow: function(){    
+	     	$(".ui-datepicker").css('font-size', 12) 
+	   	 }
+    	});
+	
+});
+	
+</script>        
+@main{
+
+	<div class="wrapper">
+     	<div class="container" >
+			 <div class="row">
+            	<div class="span12 widthFor3TabStyles">
+               		 <span>
+                    	<div id="bc1" class="btn-group btn-breadcrumb">
+       						<a href="@routes.Application.index()" class="btn btn-success homeButStyl"><i class="icon-home"></i></a>
+            				<a href="@routes.Application.showOptions("TIMESHEET","ALL")" class="btn btn-default" id="homeButtonStyles">TIMESHEET</a>
+            				<a href="#" class="btn btn-default" id="homeButtonStyles">ADD</a>
+      					</div>
+        			</span>
+            		<span class="pull-right backButPositionStyle">
+           				 <div>
+           					<a href="@routes.Application.showOptions("TIMESHEET","ALL")" class="btn btn-default backButtonStyl"><i class="icon-arrow-left"></i>BACK</a>
+          				 </div>
+        			</span>
+        		
+         	<br><br>
+         	
+         	@if(flash.containsKey("success")) {
+       			 <div class="alert alert-warning shiftEditTableStyles shiftEditTableFonts" style="padding:5px;">
+		            <b style="font-size:12px">Done!</b>@flash.get("success")
+        		</div>
+    		}
+	
+  
+  	@helper.form(action = routes.Timesheets.save(store.id), 'id -> "timesheetForm", 'onsubmit -> "return checkTimesheetExists();") {
+		
+
+		<h3 style="font-size:18px;color:#fff;">Time Sheet </h3>
+		<hr/  class="shiftEditTableStyles">
+		
+          			<div class="table-responsive"> 
+        				<table class="table table-bordered shiftEditTableStyles shiftEditTableFonts" style="background-color: #DFF0D8;border-color: #fff;">
+							<tr>
+								<td>
+									 @select(
+					                timesheetForm("empid"), 
+					                options(Employee.options(store.id)), 
+					                '_label -> "Employee", '_default -> "-- Choose a Employee --", 'required -> "true",
+					                '_showConstraints -> false
+									
+									)
+								</td>
+								<td>
+									<div class="clearfix  " id="date_field">
+		    							<label for="date" id="pageTextFontSize">Start Date</label>
+		    								<div class="input">
+		        
+		    									<input type="text" name="date" id="startDatePicker" class="startDatePicker textBoxesStyles" style="font-size:10px;" required />
+		
+		        
+		    								</div>
+									</div>
+								</td>
+								<td>
+								<div class="clearfix  " id="endDate_field">
+	    							<label for="endDate" id="pageTextFontSize">End Date</label>
+	    								<div class="input">
+	        
+	    									<input type="text" name="endDate" id="endstartDatePicker" class="endDatePicker textBoxesStyles" style="font-size:10px;" required />
+	
+	    								</div>
+									</div>
+								</td>
+								<td>
+									 <input type="checkbox" name="applyLeave" id="applyLeaveCheckBox" /> Leave
+									 
+									<div class="clearfix" id="leaveType_field" style="display:none;">
+    									<label for="leaveType" id="pageTextFontSize">Leave Type</label>
+    										<div class="input">
+    											<select id="leaveType" name="leaveType">
+    												 <option class="blank" value="None">-- Choose Type --</option>
+										             <option value="AL" >AL</option>
+							                         <option value="SL" >SL</option>
+							                         <option value="PH" >PH</option>
+							                    </select> 
+    										</div>
+									</div>
+								
+								</td>
+								
+									<input type="hidden" name="firmid" value="@store.id"/>
+								
+							</tr>	
+							<tr>
+								
+								<td>
+									<div class="clearfix  " id="timesheetStartTime_field">
+    									<label for="timesheetStartTime" id="pageTextFontSize">Start Time</label>
+    										<div class="input">
+    											<select id="startTimeHour" name="startTimeHour" required onblur="durationFromStartEnd()">
+    												 <option class="blank" value="">-- Hour --</option>
+										             @for(i <- 0 to 9) {
+    													<option value="0@i" >0@i</option>
+													 }
+													  @for(i <- 10 to 23) {
+    													<option value="@i" >@i</option>
+													 }
+							                    </select>
+							                    <select id="startTimeMins" name="startTimeMins" required onblur="durationFromStartEnd()">
+    												 <option class="blank" value="">-- Min's --</option>
+										             <option value="00" >00</option>
+							                         <option value="15" >15</option>
+							                         <option value="30" >30</option>
+							                         <option value="45" >45</option>
+							                    </select> 
+    										</div>
+									</div>
+								</td>
+								
+								<td>
+									<div class="clearfix  " id="timesheetEndTime_field">
+    									<label for="timesheetEndTime" id="pageTextFontSize">End Time</label>
+    										<div class="input">
+    											<select id="endTimeHour" name="endTimeHour" required onblur="durationFromStartEnd()">
+    												 <option class="blank" value="">-- Hour --</option>
+    												 @for(i <- 0 to 9) {
+    													<option value="0@i" >0@i</option>
+													 }
+													  @for(i <- 10 to 23) {
+    													<option value="@i" >@i</option>
+													 }
+    												
+							                    </select>
+							                    <select id="endTimeMins" name="endTimeMins" required onblur="durationFromStartEnd()">
+    												 <option class="blank" value="">-- Min's --</option>
+										             <option value="00" >00</option>
+							                         <option value="15" >15</option>
+							                         <option value="30" >30</option>
+							                         <option value="45" >45</option>
+							                    </select> 
+    										</div>
+									</div>
+								</td>
+								
+								<td>
+									@helper.inputText(timesheetForm("duration"), '_label -> "Duration", 'class -> "textBoxesStyles", 'readonly -> "readonly")
+								</td>
+								
+								<td>
+									@select(
+				  				 timesheetForm("status"),
+				  				 options(Seq("OPEN","APPROVED")),
+				 				 '_label -> "Status", 'required -> "true", '_default -> "-- Select Status --"
+								)
+								</td>
+								
+							</tr>
+						</table>
+					</div>
+            
+      	
+      	<!-- bottom div ,for submit and cancel button's -->
+        <div style="height:50px; margin-right:50px;  margin-top:10px;"   class="shiftEditTableStyles">
+        	<div>
+            	<p style="text-align: right; /"><input type="submit" id="btnSubmitInTimesheet"  class="btn btn-large btn-success"  style="padding-right:30px; padding-left:30px; text-align:center;font-size:12px;">&nbsp;&nbsp;  
+				
+		    </div>
+        </div>
+        
+    
+    
+
+
+	}<!-- form end -->
+		</div>
+        	</div>
+	</div>
+	</div>
+
+}<!-- main end -->
+
+   

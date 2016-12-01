@@ -1,0 +1,214 @@
+@(currentPage: com.avaje.ebean.Page[Shift], currentSortBy: String, currentOrder: String, currentFilter: String, store:Store, pageAction: String)
+
+
+@****************************************
+* Helper generating navigation links    *
+****************************************@
+@link(newPage:Int, newSortBy:String) = @{
+    
+    var sortBy = currentSortBy
+    var order = currentOrder
+    
+    if(newSortBy != null) {
+        sortBy = newSortBy
+        if(currentSortBy == newSortBy) {
+            if(currentOrder == "asc") {
+                order = "desc"
+            } else {
+                order = "asc"
+            }
+        } else {
+            order = "asc"
+        }
+    }
+    
+    // Generate the link
+    routes.Shifts.list(newPage, sortBy, order, currentFilter, pageAction)
+    
+}
+
+@shiftlink(storeId:Long, term_head:String) = @{
+    
+      // Generate the link
+    routes.Shifts.showBlank(storeId, term_head,pageAction)
+    
+}
+
+
+@checkSelected(newFilter:String) = @{
+
+	var result=""
+ if(currentFilter == newFilter){
+	result="selected"
+ }
+ 	result
+ 
+}
+
+@display()= @{
+
+var result = "";
+
+	
+		if(Shifts.getOPENStatus()){
+		   result = "disabled";
+		}	
+									  
+
+result;
+}
+
+@**********************************
+* Helper generating table headers *
+***********************************@
+@header(key:String, title:String) = {
+    <th class="@key.replace(".","_") header @if(currentSortBy == key) @{if(currentOrder == "asc") "headerSortDown" else "headerSortUp"}">
+        <a href="@link(0, key)">@title</a>
+    </th>
+}
+
+@main {
+    
+  <div class="wrapper">
+     	<div class="container" >
+			 <div class="row pageWidthDecreStyles">
+			 	<div class="col-md-6">
+	            	<div id="bc1" class="btn-group btn-breadcrumb">
+						<a href="@routes.Application.index()" class="btn btn-success" id="homeButtonStyles"><i class="icon-home"></i></a>
+        				<a href="@routes.Application.showOptions("SHIFT","ALL")" class="btn btn-default" id="homeButtonStyles">SHIFT</a>
+        				<a href="#" class="btn btn-default" id="homeButtonStyles">@pageAction</a>
+					</div>
+      			</div>
+    			<div class="col-md-6">
+					<span class="pull-right">
+						<div>
+							<a href="@routes.Application.index()" class="backBtnStylesInAll btn btn-default"><i class="icon-arrow-left" style="font-size: 10px;"></i>BACK</a>
+						</div>
+					</span>
+				</div>   
+        	
+     		 	<br><br>
+				
+			     <div class="col-lg-12" id="actions">
+			     @if(flash.containsKey("success")) {
+				     <div class="alert alert-warning doneAlertStyles">
+						 Done! @flash.get("success")
+				    </div>
+				} 
+				 @if(flash.containsKey("ShiftErr")) {
+				     <div class="alert alert-warning doneAlertStyles">
+						 Done! @flash.get("ShiftErr")
+				    </div>
+				}
+			     
+			        <table>
+			        	<tr>
+			        		<td> 
+			        			<form action="@link(0, "status")" method="GET">
+			          				<p class="pull-left" style="padding-top:-10px">
+			      					<select name="f" id="searchbox" class="textBoxesStyles">
+						            	<option value="OPEN" @checkSelected("OPEN")>OPEN / SAVED</option>
+						            	<option value="" @checkSelected("")>ALL</option>
+						            	<option value="SUBMITTED" @checkSelected("SUBMITTED")>SUBMITTED</option>
+			            			</select>
+			            			<input type="submit" id="searchsubmit" value="Filter by Status" class="backBtnStylesInAll btn btn-info">
+			           				</p> 
+			       			 	</form>
+			        		</td>
+			        		
+			        	</tr>
+			        </table>
+			 	</div>
+			    
+				@if(currentPage.getTotalRowCount == 0) {
+				    
+				    <div class="well">
+				        <em>Nothing to display</em>
+				    </div>
+				    
+				} else {
+					<div class=" col-lg-12 ">
+					    <div class="table-responsive">
+					    	<table class="table table-hover  table-striped"  style="background-color: beige;">
+					    		<thead style="background-color: gainsboro;" id="shiftTableTbodyStyles">
+					            <tr>
+					                @header("shiftStartDateTime", "Shift StartTime")
+					              
+					                @header("shiftEndDateTime", "Shift EndTime")
+					                
+					                <th>Terminal</th>
+					                
+					                <th>Shift Sales</th>
+					                  
+					               	<th>Media Collects</th>
+					                    
+					                <th>Register Payouts</th>
+					                    
+					                @header("shiftVariance", "Variance")
+					                    
+					                 <th>Shift Owner</th>
+					                  
+					                 @header("status", "Status")
+					                
+					            </tr>
+					        </thead>
+					        <tbody id="shiftTableTbodyStyles">
+					            @for(shift <- currentPage.getList) {
+													  
+									<tr>
+										<td><a href="@routes.Shifts.edit(shift.id,store.id,flash.get("pageAction"))">@shift.shiftStartDateTime</a></td>
+															
+										<td>@shift.shiftEndDateTime</td>	
+										<td>@shift.terminal.terminalHead.name</td>					
+										<td>@Shift.getTotalSales(shift)</td>		
+										<td>@Shift.getTotalMedialCollected(shift)</td>		
+										<td>@Shift.getTotalPayoutsbyType(shift,"REGISTERPAYOUT")</td>		
+										<td>@Shift.getTotalVariance(shift)</td>		
+										<td>@Timesheet.getEmployee(shift)</td>		
+										<td>@shift.status</td>				
+									</tr>
+									}
+					
+					        </tbody>
+					     </table>
+						</div>
+					</div>
+					<div id="pagination" class="pager">
+					    <ul>
+				        	 <div class="col-lg-4">
+					            @if(currentPage.hasPrev) {
+					                <li class="previous">
+					                    <a href="@link(currentPage.getPageIndex - 1, null)" id="padStyle">&larr; Previous</a>
+					                </li>
+					            } else {
+					                <li class="previous disabled">
+					                    <a id="padStyle">&larr; Previous</a>
+					                </li>
+					            }
+					           </div>
+					           <div class="col-lg-4">
+						            <li class="current">
+						                <a id="padStyle">Displaying @currentPage.getDisplayXtoYofZ(" to "," of ")</a>
+						            </li>
+						       </div>
+						       <div class="col-lg-4">
+						            @if(currentPage.hasNext) {
+						                <li class="next">
+						                    <a href="@link(currentPage.getPageIndex + 1, null)" id="padStyle">Next &rarr;</a>
+						                </li>
+						            } else {
+						                <li class="next disabled">
+						                    <a id="padStyle">Next &rarr;</a>
+						                </li>
+						            }
+						         </div>
+															
+					    	</ul>
+						</div>
+					}
+	   		</div>
+	 	</div>
+	</div>
+}
+
+              
